@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Калькулятор фасада Ю-Пласт</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --ink:#20241f;
+  --ink-soft:#4b5148;
+  --paper:#eef1ea;
+  --surface:#ffffff;
+  --surface-2:#f6f7f3;
+  --line:#d7dcd0;
+  --line-strong:#b9c1b0;
+  --accent:#b04e28;
+  --accent-ink:#ffffff;
+  --accent-soft:#f3e0d3;
+  --good:#4c6b54;
+  --good-soft:#e3ebe1;
+  --shadow: 0 1px 2px rgba(32,36,31,0.06), 0 8px 24px -12px rgba(32,36,31,0.18);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e9ece4;
+    --ink-soft:#aab2a1;
+    --paper:#161915;
+    --surface:#1d211c;
+    --surface-2:#232720;
+    --line:#333830;
+    --line-strong:#454c40;
+    --accent:#e0824f;
+    --accent-ink:#1a1410;
+    --accent-soft:#3a2a1f;
+    --good:#8fb597;
+    --good-soft:#22301f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e9ece4;
+  --ink-soft:#aab2a1;
+  --paper:#161915;
+  --surface:#1d211c;
+  --surface-2:#232720;
+  --line:#333830;
+  --line-strong:#454c40;
+  --accent:#e0824f;
+  --accent-ink:#1a1410;
+  --accent-soft:#3a2a1f;
+  --good:#8fb597;
+  --good-soft:#22301f;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  padding-inline:16px;
+  line-height:1.45;
+}
+h1,h2,h3{font-family:'Big Shoulders Display', 'Archivo Black', sans-serif; font-weight:700; text-wrap:balance; margin:0; letter-spacing:.2px;}
+.mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+
+a{color:var(--accent);}
+
+/* ---------- shell ---------- */
+.shell{max-width:1180px; margin:0 auto; padding-block:28px 64px;}
+
+.masthead{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+  flex-wrap:wrap;
+  padding-block-end:20px; margin-block-end:22px;
+  border-bottom:2px solid var(--line-strong);
+}
+.masthead .brand{display:flex; align-items:baseline; gap:10px;}
+.masthead .brand .mark{
+  font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:15px;
+  background:var(--ink); color:var(--paper); padding:3px 8px; border-radius:3px; letter-spacing:.5px;
+}
+.masthead h1{font-size:clamp(26px,4vw,38px); line-height:1;}
+.masthead p{margin:6px 0 0; color:var(--ink-soft); font-size:14.5px; max-width:56ch;}
+.masthead .src{font-size:12px; color:var(--ink-soft); text-align:right;}
+.masthead .src a{color:var(--ink-soft); text-decoration-color:var(--line-strong);}
+
+/* ---------- layout ---------- */
+.grid{display:grid; grid-template-columns:1.15fr 0.85fr; gap:24px; align-items:start;}
+@media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  box-shadow:var(--shadow);
+}
+.card + .card{margin-top:18px;}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:14px 18px; border-bottom:1px solid var(--line);
+}
+.card-head h2{font-size:19px;}
+.step-no{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--ink-soft);
+  border:1px solid var(--line-strong); border-radius:20px; padding:2px 9px;
+}
+.card-body{padding:16px 18px 20px;}
+
+/* ---------- form bits ---------- */
+label.field{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; margin-block-end:5px;}
+input[type=number], input[type=text], select{
+  width:100%; font:inherit; font-size:14.5px; color:var(--ink);
+  background:var(--surface-2); border:1px solid var(--line-strong); border-radius:7px;
+  padding:8px 10px; outline:none;
+}
+input[type=number]:focus, input[type=text]:focus, select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+input[type=number]{font-family:'IBM Plex Mono',monospace;}
+
+.row-grid{display:grid; gap:10px;}
+.walls-head, .wall-row{
+  display:grid; grid-template-columns:1.3fr 1fr 1fr 32px; gap:8px; align-items:end;
+}
+.openings-head, .opening-row{
+  display:grid; grid-template-columns:1.3fr 0.8fr 1fr 1fr 32px; gap:8px; align-items:end;
+}
+.walls-head span, .openings-head span{font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft); font-weight:600;}
+.wall-row, .opening-row{margin-block-start:8px;}
+.rm-btn{
+  width:32px; height:34px; border-radius:7px; border:1px solid var(--line-strong);
+  background:var(--surface-2); color:var(--ink-soft); cursor:pointer; font-size:16px; line-height:1;
+}
+.rm-btn:hover{border-color:var(--accent); color:var(--accent);}
+.add-btn{
+  margin-top:12px; display:inline-flex; align-items:center; gap:6px;
+  background:none; border:1px dashed var(--line-strong); color:var(--ink-soft);
+  border-radius:7px; padding:7px 12px; font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+}
+.add-btn:hover{border-color:var(--accent); color:var(--accent);}
+
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.four-col{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+@media (max-width:520px){ .four-col{grid-template-columns:1fr 1fr;} }
+
+.hint{font-size:12.5px; color:var(--ink-soft); margin-block-start:4px;}
+
+/* ---------- collection / color picker ---------- */
+.collection-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-block-end:14px;}
+.coll-btn{
+  font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  padding:8px 13px; border-radius:8px; border:1px solid var(--line-strong);
+  background:var(--surface-2); color:var(--ink);
+}
+.coll-btn[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+.coll-meta{font-size:13px; color:var(--ink-soft); margin-block-end:14px;}
+.coll-meta b{color:var(--ink); font-weight:600;}
+
+.swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(108px,1fr)); gap:10px;}
+.swatch{
+  border:2px solid transparent; border-radius:9px; padding:5px; cursor:pointer; text-align:left;
+  background:var(--surface-2);
+}
+.swatch[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft);}
+.swatch .chip{width:100%; aspect-ratio:4/3; border-radius:6px; border:1px solid rgba(0,0,0,.12); margin-block-end:6px;}
+.swatch .name{font-size:12px; font-weight:600; display:block; line-height:1.25;}
+
+/* ---------- results ---------- */
+.sticky{position:sticky; top:calc(env(safe-area-inset-top,0px) + 16px);}
+.summary-tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 18px;}
+.tile{background:var(--surface-2); border:1px solid var(--line); border-radius:9px; padding:12px 13px;}
+.tile .num{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; line-height:1.1;}
+.tile .lbl{font-size:11.5px; color:var(--ink-soft); margin-block-start:3px;}
+.tile.accent{background:var(--accent-soft);}
+.tile.accent .num{color:var(--accent);}
+
+table.parts{width:100%; border-collapse:collapse; font-size:13.5px;}
+table.parts th{
+  text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft);
+  font-weight:600; padding:6px 6px; border-bottom:1px solid var(--line-strong);
+}
+table.parts td{padding:9px 6px; border-bottom:1px solid var(--line);}
+table.parts tr:last-child td{border-bottom:none;}
+table.parts td.qty{font-family:'IBM Plex Mono',monospace; font-weight:600; text-align:right; white-space:nowrap;}
+table.parts td.name{font-weight:500;}
+table.parts td.desc{color:var(--ink-soft); font-size:12px;}
+.wrap-x{overflow-x:auto;}
+
+.waste-row{display:flex; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--surface-2); border-radius:0 0 10px 10px;}
+.waste-row input[type=range]{flex:1; accent-color:var(--accent);}
+.waste-row .val{font-family:'IBM Plex Mono',monospace; font-weight:600; min-width:38px; text-align:right;}
+
+.copy-bar{display:flex; gap:8px; padding:14px 18px 18px; flex-wrap:wrap;}
+.btn{
+  font:inherit; font-weight:700; font-size:13.5px; cursor:pointer; border-radius:8px; padding:10px 16px;
+  border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink);
+}
+.btn.ghost{background:none; color:var(--ink); border-color:var(--line-strong);}
+.btn:active{transform:translateY(1px);}
+.copy-msg{font-size:12.5px; color:var(--good); font-weight:600; align-self:center;}
+.copy-msg[hidden]{display:none;}
+
+.note{font-size:12.5px; color:var(--ink-soft); padding:0 18px 16px; margin:0;}
+
+footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center;}
+
+/* ---------- photo intake ---------- */
+.photo-card .card-head{background:var(--accent-soft); border-radius:10px 10px 0 0; border-bottom-color:var(--line);}
+.photo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+@media (max-width:640px){ .photo-grid{grid-template-columns:1fr 1fr;} }
+.photo-slot{
+  position:relative; border:1.5px dashed var(--line-strong); border-radius:9px;
+  aspect-ratio:4/3; background:var(--surface-2); overflow:hidden; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+}
+.photo-slot:hover{border-color:var(--accent);}
+.photo-slot.filled{border-style:solid; border-color:var(--good);}
+.photo-slot input[type=file]{position:absolute; inset:0; opacity:0; cursor:pointer;}
+.photo-slot img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.photo-slot .ph-label{
+  font-size:12px; font-weight:600; color:var(--ink-soft); padding:0 8px; line-height:1.3;
+  pointer-events:none;
+}
+.photo-slot .ph-tag{
+  position:absolute; top:6px; left:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;
+  background:rgba(0,0,0,.55); color:#fff; padding:2px 6px; border-radius:5px; pointer-events:none;
+}
+.photo-slot .ph-check{
+  position:absolute; bottom:6px; right:6px; width:18px; height:18px; border-radius:50%;
+  background:var(--good); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.scale-row{display:flex; align-items:flex-end; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.scale-row > div:first-child{flex:1; min-width:220px;}
+.ai-btn{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  font:inherit; font-weight:700; font-size:13.5px; cursor:pointer; border-radius:8px; padding:10px 16px;
+  border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+}
+.ai-btn:disabled{opacity:.5; cursor:not-allowed;}
+.ai-btn .spin{
+  width:13px; height:13px; border-radius:50%; border:2px solid rgba(255,255,255,.35); border-top-color:#fff;
+  animation:spin .8s linear infinite; display:none;
+}
+.ai-btn.busy .spin{display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-status{font-size:12.5px; margin-top:10px; padding:9px 11px; border-radius:7px; display:none;}
+.ai-status.show{display:block;}
+.ai-status.info{background:var(--surface-2); color:var(--ink-soft);}
+.ai-status.ok{background:var(--good-soft); color:var(--good);}
+.ai-status.err{background:var(--accent-soft); color:var(--accent);}
+.ai-status ul{margin:6px 0 0; padding-left:18px;}
+</style>
+
+<div class="shell">
+
+  <div class="masthead">
+    <div>
+      <div class="brand"><span class="mark">Ю·ПЛАСТ</span></div>
+      <h1>Калькулятор сайдинга и комплектующих</h1>
+      <p>Подбор фактуры и цвета, расчёт панелей и доборных элементов по размерам дома — для предварительной сметы перед заказом.</p>
+    </div>
+    <div class="src">по коллекциям сайдинга<br><a href="https://b2b.faceup.u-plast.by/" target="_blank" rel="noopener">b2b.faceup.u-plast.by</a></div>
+  </div>
+
+  <div class="card photo-card">
+    <div class="card-head"><h2>Фото дома → авторасчёт</h2><span class="step-no">ИИ</span></div>
+    <div class="card-body">
+      <div class="photo-grid" id="photoGrid"></div>
+      <div class="scale-row">
+        <div>
+          <label class="field" for="refHeight">Известная высота стены (отмостка → карниз), м</label>
+          <input type="number" id="refHeight" min="0.5" step="0.05" value="3">
+          <p class="hint" style="margin-top:6px;">Одно измерение рулеткой на фасаде — ИИ использует его как масштаб для всех 4 фото.</p>
+        </div>
+        <button class="ai-btn" id="aiBtn" type="button" disabled>
+          <span class="spin"></span><span id="aiBtnLabel">Загрузите 4 фото</span>
+        </button>
+      </div>
+      <div class="scale-row" style="margin-top:10px;">
+        <div>
+          <label class="field" for="apiEndpoint">Свой сервер (API endpoint), необязательно</label>
+          <input type="text" id="apiEndpoint" placeholder="https://ваш-сервер.onrender.com">
+          <p class="hint" style="margin-top:6px;">Если указан — фото отправляются на ваш backend с собственным Anthropic-ключом вместо встроенного распознавания. Адрес сохраняется в этом браузере.</p>
+        </div>
+      </div>
+      <div class="ai-status" id="aiStatus"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: INPUTS -->
+    <div>
+
+      <div class="card">
+        <div class="card-head"><h2>Стены</h2><span class="step-no">01</span></div>
+        <div class="card-body">
+          <div class="walls-head"><span>Стена</span><span>Ширина, м</span><span>Высота, м</span><span></span></div>
+          <div id="wallsList"></div>
+          <button class="add-btn" id="addWall" type="button">+ добавить стену</button>
+          <p class="hint">Укажите каждую стену отдельно — так точнее считаются угловые и Н-профили.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Окна и двери</h2><span class="step-no">02</span></div>
+        <div class="card-body">
+          <div class="openings-head"><span>Проём</span><span>Кол-во</span><span>Ширина, м</span><span>Высота, м</span><span></span></div>
+          <div id="openingsList"></div>
+          <button class="add-btn" id="addOpening" type="button">+ добавить проём</button>
+          <p class="hint">Площадь проёмов вычитается из площади стен; периметр проёмов идёт на плановую и финишную планку.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Углы и цоколь</h2><span class="step-no">03</span></div>
+        <div class="card-body">
+          <div class="four-col">
+            <div>
+              <label class="field" for="outerCorners">Внеш. углов, шт</label>
+              <input type="number" id="outerCorners" min="0" value="4">
+            </div>
+            <div>
+              <label class="field" for="outerHeight">Высота угла, м</label>
+              <input type="number" id="outerHeight" min="0" step="0.1" value="3">
+            </div>
+            <div>
+              <label class="field" for="innerCorners">Внутр. углов, шт</label>
+              <input type="number" id="innerCorners" min="0" value="0">
+            </div>
+            <div>
+              <label class="field" for="innerHeight">Высота угла, м</label>
+              <input type="number" id="innerHeight" min="0" step="0.1" value="3">
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div>
+              <label class="field" for="perimeter">Периметр цоколя, м</label>
+              <input type="number" id="perimeter" min="0" step="0.1" value="">
+              <p class="hint" style="margin-top:6px;">Пусто — возьмём сумму ширин стен.</p>
+            </div>
+            <div>
+              <label class="field" for="soffitArea">Свесы кровли (софит), м²</label>
+              <input type="number" id="soffitArea" min="0" step="0.5" value="0">
+              <p class="hint" style="margin-top:6px;">0 — если подшивка не нужна.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Коллекция и цвет</h2><span class="step-no">04</span></div>
+        <div class="card-body">
+          <div class="collection-tabs" id="collectionTabs"></div>
+          <p class="coll-meta" id="collMeta"></p>
+          <div class="swatches" id="swatches"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="sticky">
+      <div class="card">
+        <div class="card-head"><h2>Смета</h2><span class="step-no" id="collectionBadge">—</span></div>
+
+        <div class="summary-tiles">
+          <div class="tile accent">
+            <div class="num" id="tilePanels">—</div>
+            <div class="lbl">панелей сайдинга</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="tilePacks">—</div>
+            <div class="lbl">упаковок</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="tileArea">—</div>
+            <div class="lbl">м² к оплате (с запасом)</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="tileNetArea">—</div>
+            <div class="lbl">м² чистой стены</div>
+          </div>
+        </div>
+
+        <div class="card-body" style="padding-top:0;">
+          <div class="wrap-x">
+            <table class="parts" id="partsTable">
+              <thead><tr><th>Элемент</th><th>Назначение</th><th style="text-align:right">Кол-во</th></tr></thead>
+              <tbody id="partsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="waste-row">
+          <label class="field" for="waste" style="margin:0; white-space:nowrap;">Запас на подрезку</label>
+          <input type="range" id="waste" min="0" max="25" value="10">
+          <span class="val mono" id="wasteVal">10%</span>
+        </div>
+
+        <div class="copy-bar">
+          <button class="btn" id="copyBtn" type="button">Скопировать смету</button>
+          <button class="btn ghost" id="resetBtn" type="button">Сбросить</button>
+          <span class="copy-msg" id="copyMsg" hidden>Скопировано ✓</span>
+        </div>
+        <p class="note">Расчёт ориентировочный — для точной сметы и подбора остатков на складе уточняйте у партнёра U‑Plast. Размеры панелей и раскладка цветов даны по коллекциям сайдинга, фасадных панелей и софитов Ю‑Пласт.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>Калькулятор фасада · независимый инструмент предварительного расчёта, не является официальной сметой Ю‑Пласт</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- product data ----------
+  // Panel geometry is representative per collection line (working area per panel, pack size).
+  // For an exact order, confirm current batch specs with the U-Plast partner catalog.
+  var COLLECTIONS = [
+    {
+      id:'brus', name:'Корабельный брус', kind:'сайдинг · под дерево',
+      panelLen:3.05, panelW:0.23, area:0.70, pack:10,
+      texture:'wood-brus',
+      colors:[
+        {n:'Белый', hex:'#f2efe6'},
+        {n:'Слоновая кость', hex:'#eee0bd'},
+        {n:'Кремовый', hex:'#e7d3a6'},
+        {n:'Светло-серый', hex:'#c9cbc2'},
+        {n:'Серый камень', hex:'#9a9c8f'},
+        {n:'Графит', hex:'#4a4c46'}
+      ]
+    },
+    {
+      id:'timberblock', name:'Timberblock', kind:'сайдинг · под дерево, брус',
+      panelLen:3.05, panelW:0.23, area:0.70, pack:10,
+      texture:'wood-timber',
+      colors:[
+        {n:'Ясень', hex:'#d8c9a8'},
+        {n:'Дуб', hex:'#b98a54'},
+        {n:'Ель', hex:'#8a6b42'},
+        {n:'Кедр', hex:'#a2532c'},
+        {n:'Пихта', hex:'#6e5738'}
+      ]
+    },
+    {
+      id:'planken', name:'Планкен', kind:'сайдинг · вертикальный, под дерево',
+      panelLen:2.00, panelW:0.24, area:0.48, pack:12,
+      texture:'wood-vert',
+      colors:[
+        {n:'Кеновый', hex:'#c9ad7f'},
+        {n:'Янтарный', hex:'#a9702f'},
+        {n:'Угольный', hex:'#3b332c'},
+        {n:'Седой', hex:'#8d8d84'}
+      ]
+    },
+    {
+      id:'stonehouse', name:'Stone House', kind:'фасадная панель · под камень',
+      panelLen:1.14, panelW:0.47, area:0.53, pack:4,
+      texture:'stone',
+      colors:[
+        {n:'Известняк светлый', hex:'#d8d2c3'},
+        {n:'Известняк тёмный', hex:'#a49a86'},
+        {n:'Сланец', hex:'#5b5a57'},
+        {n:'Песчаник', hex:'#c1997a'}
+      ]
+    },
+    {
+      id:'hokla', name:'Hokla', kind:'фасадная панель · под щепу',
+      panelLen:1.14, panelW:0.47, area:0.53, pack:4,
+      texture:'shake',
+      colors:[
+        {n:'Натуральный', hex:'#b98f57'},
+        {n:'Графит', hex:'#4e4a44'},
+        {n:'Кофе', hex:'#5e4128'}
+      ]
+    },
+    {
+      id:'classic', name:'Classic', kind:'сайдинг · гладкий классический',
+      panelLen:3.66, panelW:0.23, area:0.84, pack:10,
+      texture:'smooth',
+      colors:[
+        {n:'Белый', hex:'#f5f3ec'},
+        {n:'Пастель', hex:'#e9e3cf'},
+        {n:'Голубой', hex:'#b9c8cc'},
+        {n:'Зелёный', hex:'#7f9a72'},
+        {n:'Коричневый', hex:'#6d5540'}
+      ]
+    }
+  ];
+
+  var TRIM_LEN = 3.0; // standard length of corner/starting/J/finish strips, m
+
+  var state = {
+    walls: [ {w:6, h:3}, {w:9, h:3}, {w:6, h:3}, {w:9, h:3} ],
+    openings: [ {label:'Окна', qty:6, w:1.3, h:1.4}, {label:'Дверь', qty:1, w:1.0, h:2.1} ],
+    collection: COLLECTIONS[0].id,
+    color: COLLECTIONS[0].colors[0].n,
+    waste: 10
+  };
+
+  function texCss(tex, hex){
+    switch(tex){
+      case 'wood-brus':
+        return 'repeating-linear-gradient(180deg,'+shade(hex,10)+' 0 3px,'+hex+' 3px 9px), linear-gradient(180deg,'+shade(hex,18)+','+shade(hex,-6)+')';
+      case 'wood-timber':
+        return 'repeating-linear-gradient(180deg,'+shade(hex,14)+' 0 2px,'+hex+' 2px 7px,'+shade(hex,-8)+' 7px 8px)';
+      case 'wood-vert':
+        return 'repeating-linear-gradient(90deg,'+shade(hex,12)+' 0 3px,'+hex+' 3px 12px,'+shade(hex,-10)+' 12px 13px)';
+      case 'stone':
+        return 'radial-gradient(circle at 20% 30%,'+shade(hex,16)+' 0 14%, transparent 15%), radial-gradient(circle at 70% 60%,'+shade(hex,-12)+' 0 18%, transparent 19%), radial-gradient(circle at 45% 85%,'+shade(hex,10)+' 0 12%, transparent 13%), linear-gradient('+hex+','+hex+')';
+      case 'shake':
+        return 'repeating-linear-gradient(25deg,'+shade(hex,10)+' 0 4px,'+hex+' 4px 10px)';
+      default:
+        return 'linear-gradient(180deg,'+shade(hex,10)+','+shade(hex,-6)+')';
+    }
+  }
+  function shade(hex, pct){
+    var n = hex.replace('#',''); var r=parseInt(n.substr(0,2),16), g=parseInt(n.substr(2,2),16), b=parseInt(n.substr(4,2),16);
+    var f = pct/100;
+    r = Math.round(r + (pct>0? (255-r)*f : r*f));
+    g = Math.round(g + (pct>0? (255-g)*f : g*f));
+    b = Math.round(b + (pct>0? (255-b)*f : b*f));
+    return 'rgb('+r+','+g+','+b+')';
+  }
+  function getCollection(id){ return COLLECTIONS.filter(function(c){return c.id===id;})[0]; }
+
+  // ---------- render: walls ----------
+  var wallsList = document.getElementById('wallsList');
+  var openingsList = document.getElementById('openingsList');
+
+  function renderWalls(){
+    wallsList.innerHTML = '';
+    state.walls.forEach(function(w, i){
+      var row = document.createElement('div');
+      row.className = 'wall-row';
+      row.innerHTML =
+        '<input type="text" data-i="'+i+'" data-f="label" value="'+(w.label||('Стена '+(i+1)))+'">' +
+        '<input type="number" min="0" step="0.1" data-i="'+i+'" data-f="w" value="'+w.w+'">' +
+        '<input type="number" min="0" step="0.1" data-i="'+i+'" data-f="h" value="'+w.h+'">' +
+        '<button class="rm-btn" type="button" data-i="'+i+'" title="Удалить">×</button>';
+      wallsList.appendChild(row);
+    });
+    Array.prototype.forEach.call(wallsList.querySelectorAll('input'), function(inp){
+      inp.addEventListener('input', function(){
+        var i = +inp.dataset.i, f = inp.dataset.f;
+        state.walls[i][f] = (f==='label') ? inp.value : (parseFloat(inp.value)||0);
+        recalc();
+      });
+    });
+    Array.prototype.forEach.call(wallsList.querySelectorAll('.rm-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        state.walls.splice(+btn.dataset.i,1); renderWalls(); recalc();
+      });
+    });
+  }
+
+  function renderOpenings(){
+    openingsList.innerHTML = '';
+    state.openings.forEach(function(o, i){
+      var row = document.createElement('div');
+      row.className = 'opening-row';
+      row.innerHTML =
+        '<input type="text" data-i="'+i+'" data-f="label" value="'+o.label+'">' +
+        '<input type="number" min="0" data-i="'+i+'" data-f="qty" value="'+o.qty+'">' +
+        '<input type="number" min="0" step="0.1" data-i="'+i+'" data-f="w" value="'+o.w+'">' +
+        '<input type="number" min="0" step="0.1" data-i="'+i+'" data-f="h" value="'+o.h+'">' +
+        '<button class="rm-btn" type="button" data-i="'+i+'" title="Удалить">×</button>';
+      openingsList.appendChild(row);
+    });
+    Array.prototype.forEach.call(openingsList.querySelectorAll('input'), function(inp){
+      inp.addEventListener('input', function(){
+        var i = +inp.dataset.i, f = inp.dataset.f;
+        state.openings[i][f] = (f==='label') ? inp.value : (parseFloat(inp.value)||0);
+        recalc();
+      });
+    });
+    Array.prototype.forEach.call(openingsList.querySelectorAll('.rm-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        state.openings.splice(+btn.dataset.i,1); renderOpenings(); recalc();
+      });
+    });
+  }
+
+  document.getElementById('addWall').addEventListener('click', function(){
+    state.walls.push({w:5,h:3}); renderWalls(); recalc();
+  });
+  document.getElementById('addOpening').addEventListener('click', function(){
+    state.openings.push({label:'Окно', qty:1, w:1.2, h:1.4}); renderOpenings(); recalc();
+  });
+
+  // ---------- collection tabs + swatches ----------
+  var tabsEl = document.getElementById('collectionTabs');
+  var swatchesEl = document.getElementById('swatches');
+  var collMetaEl = document.getElementById('collMeta');
+
+  function renderTabs(){
+    tabsEl.innerHTML = '';
+    COLLECTIONS.forEach(function(c){
+      var b = document.createElement('button');
+      b.className = 'coll-btn'; b.type='button'; b.textContent = c.name;
+      b.setAttribute('aria-pressed', String(c.id===state.collection));
+      b.addEventListener('click', function(){
+        state.collection = c.id;
+        state.color = c.colors[0].n;
+        renderTabs(); renderSwatches(); recalc();
+      });
+      tabsEl.appendChild(b);
+    });
+    var c = getCollection(state.collection);
+    collMetaEl.innerHTML = '<b>'+c.kind+'</b> — панель '+c.panelLen.toFixed(2)+' × '+c.panelW.toFixed(2)+' м, рабочая площадь '+c.area.toFixed(2)+' м², '+c.pack+' шт/уп.';
+  }
+
+  function renderSwatches(){
+    swatchesEl.innerHTML = '';
+    var c = getCollection(state.collection);
+    c.colors.forEach(function(col){
+      var b = document.createElement('button');
+      b.className = 'swatch'; b.type='button';
+      b.setAttribute('aria-pressed', String(col.n===state.color));
+      var chip = document.createElement('span');
+      chip.className='chip';
+      chip.style.background = texCss(c.texture, col.hex);
+      var name = document.createElement('span');
+      name.className='name'; name.textContent = col.n;
+      b.appendChild(chip); b.appendChild(name);
+      b.addEventListener('click', function(){ state.color = col.n; renderSwatches(); recalc(); });
+      swatchesEl.appendChild(b);
+    });
+  }
+
+  // ---------- waste slider ----------
+  var wasteInput = document.getElementById('waste');
+  var wasteVal = document.getElementById('wasteVal');
+  wasteInput.addEventListener('input', function(){
+    state.waste = +wasteInput.value; wasteVal.textContent = state.waste+'%'; recalc();
+  });
+
+  // ---------- calc ----------
+  function sum(arr, fn){ return arr.reduce(function(a,x){return a+fn(x);},0); }
+
+  function recalc(){
+    var c = getCollection(state.collection);
+    var wasteF = 1 + state.waste/100;
+
+    var grossWallArea = sum(state.walls, function(w){ return Math.max(0,w.w)*Math.max(0,w.h); });
+    var openingsArea = sum(state.openings, function(o){ return Math.max(0,o.qty)*Math.max(0,o.w)*Math.max(0,o.h); });
+    var netArea = Math.max(0, grossWallArea - openingsArea);
+    var areaWithWaste = netArea * wasteF;
+
+    var panels = Math.ceil(areaWithWaste / c.area);
+    var packs = Math.ceil(panels / c.pack);
+    var boughtArea = panels * c.area;
+
+    var perimeter = document.getElementById('perimeter').value;
+    perimeter = perimeter ? parseFloat(perimeter) : sum(state.walls, function(w){return w.w;});
+    if(!perimeter || perimeter<0) perimeter=0;
+
+    var outerCorners = parseFloat(document.getElementById('outerCorners').value)||0;
+    var outerH = parseFloat(document.getElementById('outerHeight').value)||0;
+    var innerCorners = parseFloat(document.getElementById('innerCorners').value)||0;
+    var innerH = parseFloat(document.getElementById('innerHeight').value)||0;
+    var soffitArea = parseFloat(document.getElementById('soffitArea').value)||0;
+
+    var startStripQty = Math.ceil((perimeter*wasteF)/TRIM_LEN) || 0;
+    var outerCornerQty = Math.ceil((outerCorners*outerH*wasteF)/TRIM_LEN) || 0;
+    var innerCornerQty = Math.ceil((innerCorners*innerH*wasteF)/TRIM_LEN) || 0;
+
+    var openingsPerimeter = sum(state.openings, function(o){ return o.qty*2*(o.w+o.h); });
+    var jTrimQty = Math.ceil((openingsPerimeter*wasteF)/TRIM_LEN) || 0;
+
+    // H-profile: one vertical joint per wall wider than a panel run (simplified: every extra 3m of wall width beyond the first)
+    var hProfileRuns = sum(state.walls, function(w){ return Math.max(0, Math.ceil(w.w / (c.panelLen*1.6)) - 1); });
+    var hProfileQty = Math.ceil((hProfileRuns * sum(state.walls,function(w){return w.h;})/Math.max(1,state.walls.length) * wasteF)/TRIM_LEN) || 0;
+
+    var soffitPanels = soffitArea>0 ? Math.ceil((soffitArea*wasteF)/0.9) : 0; // soffit panel ~0.9 m2
+    var soffitJQty = soffitArea>0 ? Math.ceil((perimeter*wasteF)/TRIM_LEN) : 0;
+
+    document.getElementById('tilePanels').textContent = panels;
+    document.getElementById('tilePacks').textContent = packs;
+    document.getElementById('tileArea').textContent = boughtArea.toFixed(1)+' м²';
+    document.getElementById('tileNetArea').textContent = netArea.toFixed(1)+' м²';
+    document.getElementById('collectionBadge').textContent = c.name;
+
+    var rows = [
+      {name:c.name+' — '+state.color, desc:'основной сайдинг, '+c.pack+' шт/уп.', qty:panels+' шт · '+packs+' уп.'},
+      {name:'Стартовая планка', desc:'монтаж по периметру цоколя', qty:startStripQty+' шт'},
+      {name:'Наружный угол', desc:outerCorners+' угл. × '+outerH.toFixed(1)+' м', qty:outerCornerQty+' шт'}
+    ];
+    if(innerCorners>0) rows.push({name:'Внутренний угол', desc:innerCorners+' угл. × '+innerH.toFixed(1)+' м', qty:innerCornerQty+' шт'});
+    rows.push({name:'J-профиль / финишная', desc:'обрамление окон и дверей', qty:jTrimQty+' шт'});
+    if(hProfileQty>0) rows.push({name:'Н-профиль', desc:'стыковка панелей на длинных стенах', qty:hProfileQty+' шт'});
+    if(soffitArea>0){
+      rows.push({name:'Софит', desc:'подшивка свесов кровли', qty:soffitPanels+' шт'});
+      rows.push({name:'J-профиль (софит)', desc:'по периметру подшивки', qty:soffitJQty+' шт'});
+    }
+
+    var body = document.getElementById('partsBody');
+    body.innerHTML = '';
+    rows.forEach(function(r){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="name">'+r.name+'</td><td class="desc">'+r.desc+'</td><td class="qty">'+r.qty+'</td>';
+      body.appendChild(tr);
+    });
+
+    state._lastSummary = {c:c, color:state.color, panels:panels, packs:packs, boughtArea:boughtArea, netArea:netArea, rows:rows, waste:state.waste};
+  }
+
+  // ---------- copy / reset ----------
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var s = state._lastSummary;
+    if(!s) return;
+    var lines = [];
+    lines.push('Смета фасада — '+s.c.name+', '+s.color);
+    lines.push('Чистая площадь стен: '+s.netArea.toFixed(1)+' м² · запас на подрезку: '+s.waste+'%');
+    lines.push('');
+    s.rows.forEach(function(r){ lines.push('- '+r.name+': '+r.qty+' ('+r.desc+')'); });
+    lines.push('');
+    lines.push('Ориентировочный расчёт, источник фактур: b2b.faceup.u-plast.by');
+    var text = lines.join('\n');
+    var msg = document.getElementById('copyMsg');
+    function shown(){ msg.hidden=false; setTimeout(function(){msg.hidden=true;},2200); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(shown).catch(function(){ fallbackCopy(text, shown); });
+    } else { fallbackCopy(text, shown); }
+  });
+  function fallbackCopy(text, cb){
+    try{
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); cb();
+    }catch(e){}
+  }
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    state.walls = [ {w:6, h:3}, {w:9, h:3}, {w:6, h:3}, {w:9, h:3} ];
+    state.openings = [ {label:'Окна', qty:6, w:1.3, h:1.4}, {label:'Дверь', qty:1, w:1.0, h:2.1} ];
+    document.getElementById('outerCorners').value=4;
+    document.getElementById('outerHeight').value=3;
+    document.getElementById('innerCorners').value=0;
+    document.getElementById('innerHeight').value=3;
+    document.getElementById('perimeter').value='';
+    document.getElementById('soffitArea').value=0;
+    document.getElementById('waste').value=10; state.waste=10; wasteVal.textContent='10%';
+    renderWalls(); renderOpenings(); recalc();
+  });
+
+  // ---------- boot ----------
+  renderWalls();
+  renderOpenings();
+  renderTabs();
+  renderSwatches();
+  recalc();
+
+  var extraInputs = ['outerCorners','outerHeight','innerCorners','innerHeight','perimeter','soffitArea'];
+  extraInputs.forEach(function(id){ document.getElementById(id).addEventListener('input', recalc); });
+
+  // ---------- photo intake: 4 facade shots -> Claude vision -> autofill ----------
+  var PHOTO_SLOTS = [
+    {key:'front', tag:'01', label:'Фасад спереди'},
+    {key:'back',  tag:'02', label:'Фасад сзади'},
+    {key:'left',  tag:'03', label:'Фасад слева'},
+    {key:'right', tag:'04', label:'Фасад справа'}
+  ];
+  var photos = {}; // key -> File
+  var photoGrid = document.getElementById('photoGrid');
+  var aiBtn = document.getElementById('aiBtn');
+  var aiBtnLabel = document.getElementById('aiBtnLabel');
+  var aiStatus = document.getElementById('aiStatus');
+
+  function renderPhotoGrid(){
+    photoGrid.innerHTML = '';
+    PHOTO_SLOTS.forEach(function(slot){
+      var div = document.createElement('div');
+      div.className = 'photo-slot' + (photos[slot.key] ? ' filled' : '');
+      var inner = '<span class="ph-tag">'+slot.tag+'</span>';
+      if(photos[slot.key]){
+        inner += '<img src="'+URL.createObjectURL(photos[slot.key])+'" alt="">' +
+                 '<span class="ph-check">✓</span>';
+      } else {
+        inner += '<span class="ph-label">'+slot.label+'<br>нажмите или перетащите фото</span>';
+      }
+      inner += '<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-key="'+slot.key+'">';
+      div.innerHTML = inner;
+      photoGrid.appendChild(div);
+    });
+    Array.prototype.forEach.call(photoGrid.querySelectorAll('input[type=file]'), function(inp){
+      inp.addEventListener('change', function(){
+        if(inp.files && inp.files[0]){ photos[inp.dataset.key] = inp.files[0]; renderPhotoGrid(); updateAiBtn(); }
+      });
+    });
+  }
+  function updateAiBtn(){
+    var count = PHOTO_SLOTS.filter(function(s){return !!photos[s.key];}).length;
+    aiBtn.disabled = count < 4;
+    aiBtnLabel.textContent = count < 4 ? ('Загружено '+count+' из 4 фото') : 'Рассчитать по фото';
+  }
+  renderPhotoGrid();
+  updateAiBtn();
+
+  // remember a custom backend endpoint per-browser (never sent anywhere but used to call it)
+  var apiEndpointInput = document.getElementById('apiEndpoint');
+  try{
+    var savedEndpoint = localStorage.getItem('sidingApiEndpoint');
+    if(savedEndpoint) apiEndpointInput.value = savedEndpoint;
+  }catch(e){}
+  apiEndpointInput.addEventListener('change', function(){
+    try{ localStorage.setItem('sidingApiEndpoint', apiEndpointInput.value.trim()); }catch(e){}
+  });
+
+  function showStatus(kind, html){
+    aiStatus.className = 'ai-status show ' + kind;
+    aiStatus.innerHTML = html;
+  }
+
+  aiBtn.addEventListener('click', function(){
+    var endpoint = apiEndpointInput.value.trim().replace(/\/+$/,'');
+    if(endpoint){ runViaOwnServer(endpoint); } else { runViaBuiltInSample(); }
+  });
+
+  function applyEstimate(data, refH){
+    if(data && Array.isArray(data.walls) && data.walls.length){
+      state.walls = data.walls.map(function(w){
+        return { label: String(w.label||'Стена'), w: Math.max(0, Number(w.w)||0), h: Math.max(0, Number(w.h)||refH) };
+      });
+    }
+    if(data && Array.isArray(data.openings) && data.openings.length){
+      state.openings = data.openings
+        .filter(function(o){ return (Number(o.qty)||0) > 0; })
+        .map(function(o){
+          return { label: String(o.label||'Проём'), qty: Math.max(0, Math.round(Number(o.qty)||0)), w: Math.max(0,Number(o.w)||0), h: Math.max(0,Number(o.h)||0) };
+        });
+      if(!state.openings.length) state.openings = [{label:'Окна', qty:0, w:1.2, h:1.4}];
+    }
+    if(data){
+      if(data.outerCorners != null) document.getElementById('outerCorners').value = Math.max(0, Math.round(Number(data.outerCorners)||4));
+      if(data.innerCorners != null) document.getElementById('innerCorners').value = Math.max(0, Math.round(Number(data.innerCorners)||0));
+      document.getElementById('outerHeight').value = refH;
+      document.getElementById('innerHeight').value = refH;
+    }
+    renderWalls(); renderOpenings(); recalc();
+    var okHtml = 'Готово — данные со стен и проёмов подставлены слева, можно поправить вручную перед расчётом сметы.';
+    if(data && data.notes){ okHtml += '<br><b>Заметка ИИ:</b> ' + String(data.notes); }
+    showStatus('ok', okHtml);
+  }
+
+  // ---- Path A: viewer's own Claude session (no key needed, only where supported) ----
+  async function runViaBuiltInSample(){
+    var sample = null;
+    try{ sample = window.claude ? await window.claude.use('sample') : null; }catch(e){ sample = null; }
+
+    if(!sample){
+      showStatus('err',
+        'Автораспознавание по фото недоступно в этом окне просмотра.<br>' +
+        'Откройте эту страницу из карточки артефакта прямо в диалоге Claude (не как отдельную вкладку/внешнюю ссылку) — там оно обычно работает. ' +
+        'Либо укажите адрес своего сервера в поле выше, либо заполните размеры стен вручную слева.');
+      return;
+    }
+
+    var limits;
+    try{ limits = await sample.limits(); }catch(e){ limits = null; }
+    if(!limits || !limits.images){
+      await new Promise(function(r){ setTimeout(r, 1500); });
+      try{ limits = await sample.limits(); }catch(e){ limits = null; }
+    }
+    if(!limits || !limits.images){
+      showStatus('err',
+        'Этот просмотрщик не поддерживает отправку фото Claude. Это ограничение того, где открыт артефакт (пробуйте открыть его из диалога, не по внешней ссылке). ' +
+        'Альтернатива — указать выше адрес своего сервера или ввести размеры вручную.');
+      return;
+    }
+
+    var refH = parseFloat(document.getElementById('refHeight').value) || 3;
+    var imgList = PHOTO_SLOTS.map(function(s){ return photos[s.key]; });
+
+    aiBtn.classList.add('busy'); aiBtn.disabled = true;
+    aiBtnLabel.textContent = 'Считаю по фото…';
+    showStatus('info', 'Claude смотрит на 4 фото фасада и оценивает размеры стен, проёмов и углов. Обычно 10–40 секунд…');
+
+    var prompt = buildPrompt(refH, 4);
+
+    try{
+      var data = await sample.json(prompt, { images: imgList, modelTier: 'default', cache: false });
+      applyEstimate(data, refH);
+    }catch(e){
+      var code = e && e.code;
+      var msg = 'Не получилось распознать фото.';
+      if(code === 'not_granted') msg = 'Нужно разрешить этой странице обращаться к Claude — повторите попытку и подтвердите запрос.';
+      else if(code === 'images_unavailable') msg = 'В этом окне просмотра нельзя отправлять фото Claude.';
+      else if(code === 'image_rejected') msg = 'Одно из фото не подошло (формат/размер) — попробуйте другое фото.';
+      else if(code === 'rate_limited') msg = 'Слишком много запросов подряд — подождите немного и попробуйте снова.';
+      else if(code === 'invalid_json') msg = 'ИИ ответил не в ожидаемом формате — попробуйте ещё раз.';
+      else if(code === 'refused') msg = 'Запрос был отклонён — попробуйте другие фото.';
+      showStatus('err', msg);
+    } finally {
+      aiBtn.classList.remove('busy'); updateAiBtn();
+    }
+  }
+
+  // ---- Path B: your own backend holding the Anthropic API key ----
+  async function runViaOwnServer(endpoint){
+    var refH = parseFloat(document.getElementById('refHeight').value) || 3;
+
+    aiBtn.classList.add('busy'); aiBtn.disabled = true;
+    aiBtnLabel.textContent = 'Считаю по фото…';
+    showStatus('info', 'Отправляю фото на ваш сервер ('+endpoint+') и жду ответ. Обычно 10–40 секунд…');
+
+    try{
+      var form = new FormData();
+      PHOTO_SLOTS.forEach(function(s){
+        if(photos[s.key]) form.append('photos', photos[s.key], s.key+'.jpg');
+      });
+      form.append('refHeight', String(refH));
+
+      var resp = await fetch(endpoint + '/estimate', { method:'POST', body: form });
+      if(!resp.ok){
+        var errText = '';
+        try{ var errJson = await resp.json(); errText = errJson.message || errJson.error || ''; }catch(e){}
+        throw new Error('Сервер ответил ошибкой ('+resp.status+'). '+errText);
+      }
+      var data = await resp.json();
+      applyEstimate(data, refH);
+    }catch(e){
+      showStatus('err', 'Не получилось связаться с вашим сервером: ' + (e && e.message ? e.message : String(e)) +
+        '<br>Проверьте, что адрес верный, сервер запущен и отвечает на <code>/estimate</code>.');
+    } finally {
+      aiBtn.classList.remove('busy'); updateAiBtn();
+    }
+  }
+
+  function buildPrompt(refH, n){
+    var labels = PHOTO_SLOTS.slice(0,n).map(function(s){return s.label;}).join(', ');
+    return 'Ты помогаешь рассчитать виниловый сайдинг по фотографиям дома. ' +
+      'Даны фото фасадов в таком порядке: ' + labels + '. ' +
+      'Известная высота стены от отмостки/цоколя до карниза (одна и та же для всех фасадов, используй как масштаб): ' + refH + ' м. ' +
+      'Для каждого фасада на глаз оцени ширину стены в метрах (используя высоту как масштаб и пропорции дома), ' +
+      'посчитай видимые окна (количество и среднюю ширину/высоту, м) и двери (количество и среднюю ширину/высоту, м) на этом фасаде, ' +
+      'и есть ли на фасаде фронтон (треугольная часть под крышей) — если да, добавь его площадь к площади стены приблизительно. ' +
+      'Также оцени общее число НАРУЖНЫХ углов дома (обычно 4 для прямоугольного дома, больше для сложной формы) и число ВНУТРЕННИХ углов (0, если дом простой прямоугольный, больше если есть пристройки/эркеры). ' +
+      'Если фасад плохо виден или размыт — дай разумную оценку по пропорциям, но отметь это в notes. ' +
+      'Ответь СТРОГО JSON без пояснений вокруг, такой формы:\n' +
+      '{"walls":[{"label":"Фасад спереди","w":0,"h":'+refH+'}, ...],' +
+      '"openings":[{"label":"Окна","qty":0,"w":0,"h":0},{"label":"Двери","qty":0,"w":0,"h":0}],' +
+      '"outerCorners":4,"innerCorners":0,"notes":"коротко, что не удалось разглядеть или что предположено"}';
+  }
+
+})();
+</script>
+
+</html>
