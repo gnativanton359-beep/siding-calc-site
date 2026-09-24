@@ -73,12 +73,12 @@ h1,h2,h3{font-family:'Big Shoulders Display', 'Archivo Black', sans-serif; font-
 a{color:var(--accent);}
 
 /* ---------- shell ---------- */
-.shell{max-width:1180px; margin:0 auto; padding-block:28px 64px;}
+.shell{max-width:1180px; margin:0 auto; padding-block:16px 40px;}
 
 .masthead{
   display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
   flex-wrap:wrap;
-  padding-block-end:20px; margin-block-end:22px;
+  padding-block-end:12px; margin-block-end:14px;
   border-bottom:2px solid var(--line-strong);
 }
 .masthead .brand{display:flex; align-items:baseline; gap:10px;}
@@ -95,21 +95,48 @@ a{color:var(--accent);}
 .grid{display:grid; grid-template-columns:1.15fr 0.85fr; gap:24px; align-items:start;}
 @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
 
+/* ---------- mobile sticky total bar ---------- */
+.mobile-total-bar{ display:none; }
+@media (max-width:880px){
+  body{ padding-bottom:74px; }
+  .mobile-total-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+    background:var(--surface); border-top:1px solid var(--line);
+    box-shadow:0 -6px 18px rgba(0,0,0,.12);
+  }
+  .mobile-total-bar .mtb-label{ font-size:11.5px; color:var(--ink-soft); }
+  .mobile-total-bar .mtb-num{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:19px; color:var(--accent); }
+  .mobile-total-bar button{
+    font:inherit; font-weight:700; font-size:14px; padding:12px 18px; border-radius:8px;
+    border:none; background:var(--accent); color:var(--accent-ink); cursor:pointer; white-space:nowrap;
+  }
+}
+
+/* ---------- comfortable touch targets on mobile ---------- */
+@media (max-width:880px){
+  input[type=number], input[type=text], select{ font-size:16px; padding:11px 12px; }
+  .add-btn, .ai-btn, button{ min-height:40px; }
+  .card-head h2{ font-size:17px; }
+  h1{ font-size:26px !important; }
+}
+
 .card{
   background:var(--surface); border:1px solid var(--line); border-radius:10px;
   box-shadow:var(--shadow);
 }
-.card + .card{margin-top:18px;}
+.card + .card{margin-top:12px;}
 .card-head{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:14px 18px; border-bottom:1px solid var(--line);
+  padding:11px 16px; border-bottom:1px solid var(--line);
 }
-.card-head h2{font-size:19px;}
+.card-head h2{font-size:17px;}
 .step-no{
   font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--ink-soft);
   border:1px solid var(--line-strong); border-radius:20px; padding:2px 9px;
 }
-.card-body{padding:16px 18px 20px;}
+.card-body{padding:13px 16px 15px;}
 
 /* ---------- form bits ---------- */
 label.field{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; margin-block-end:5px;}
@@ -237,11 +264,10 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
 
 /* ---------- photo intake ---------- */
 .photo-card .card-head{background:var(--accent-soft); border-radius:10px 10px 0 0; border-bottom-color:var(--line);}
-.photo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
-@media (max-width:640px){ .photo-grid{grid-template-columns:1fr 1fr;} }
+.photo-grid{display:flex; flex-wrap:wrap; gap:8px;}
 .photo-slot{
   position:relative; border:1.5px dashed var(--line-strong); border-radius:9px;
-  aspect-ratio:4/3; background:var(--surface-2); overflow:hidden; cursor:pointer;
+  width:104px; height:78px; flex:0 0 auto; background:var(--surface-2); overflow:hidden; cursor:pointer;
   display:flex; align-items:center; justify-content:center; text-align:center;
 }
 .photo-slot:hover{border-color:var(--accent);}
@@ -249,7 +275,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
 .photo-slot input[type=file]{position:absolute; inset:0; opacity:0; cursor:pointer;}
 .photo-slot img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
 .photo-slot .ph-label{
-  font-size:12px; font-weight:600; color:var(--ink-soft); padding:0 8px; line-height:1.3;
+  font-size:10.5px; font-weight:600; color:var(--ink-soft); padding:0 6px; line-height:1.25;
   pointer-events:none;
 }
 .photo-slot .ph-tag{
@@ -261,7 +287,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
   background:var(--good); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center;
   pointer-events:none;
 }
-.scale-row{display:flex; align-items:flex-end; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.scale-row{display:flex; align-items:flex-end; gap:12px; margin-top:10px; flex-wrap:wrap;}
 .scale-row > div:first-child{flex:1; min-width:220px;}
 .ai-btn{
   display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
@@ -297,24 +323,33 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
   <div class="card photo-card">
     <div class="card-head"><h2>Фото дома → авторасчёт</h2><span class="step-no">ИИ</span></div>
     <div class="card-body">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-block-end:10px;">
+        <label class="btn-upload-all" for="photoUploadAll" style="display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid var(--line-strong); border-radius:8px; background:var(--surface-2); cursor:pointer; font-weight:600; white-space:nowrap;">
+          📷 Загрузить фото дома
+          <input type="file" id="photoUploadAll" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+        </label>
+        <p class="hint" style="margin:0; flex:1; min-width:180px;">Хватит и одного фото — чем больше фото дома с разных сторон, тем точнее расчёт (до 5 шт.).</p>
+      </div>
       <div class="photo-grid" id="photoGrid"></div>
       <div class="scale-row">
         <div>
-          <label class="field" for="refHeight">Известная высота стены (отмостка → карниз), м</label>
-          <input type="number" id="refHeight" min="0.5" step="0.05" value="3">
-          <p class="hint" style="margin-top:6px;">Одно измерение рулеткой на фасаде — ИИ использует его как масштаб для всех 4 фото.</p>
+          <label class="field" for="refHeight">Высота стены (отмостка → карниз), м — необязательно</label>
+          <input type="number" id="refHeight" min="0.5" step="0.05" placeholder="напр. 3">
         </div>
         <button class="ai-btn" id="aiBtn" type="button" disabled>
-          <span class="spin"></span><span id="aiBtnLabel">Загрузите 4 фото</span>
+          <span class="spin"></span><span id="aiBtnLabel">Загрузите хотя бы 1 фото</span>
         </button>
       </div>
-      <div class="scale-row" style="margin-top:10px;">
-        <div>
-          <label class="field" for="apiEndpoint">Свой сервер (API endpoint), необязательно</label>
-          <input type="text" id="apiEndpoint" placeholder="https://ваш-сервер.onrender.com">
-          <p class="hint" style="margin-top:6px;">Если указан — фото отправляются на ваш backend вместо встроенного распознавания. Адрес сохраняется в этом браузере.</p>
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer; font-size:13px; color:var(--ink-soft); user-select:none;">Настройки для технарей (необязательно)</summary>
+        <div class="scale-row" style="margin-top:10px;">
+          <div>
+            <label class="field" for="apiEndpoint">Свой сервер (API endpoint)</label>
+            <input type="text" id="apiEndpoint" placeholder="https://ваш-сервер.onrender.com">
+            <p class="hint" style="margin-top:6px;">Если указан — фото отправляются на ваш backend вместо встроенного распознавания. Адрес сохраняется в этом браузере.</p>
+          </div>
         </div>
-      </div>
+      </details>
       <div class="ai-status" id="aiStatus"></div>
     </div>
   </div>
@@ -326,10 +361,12 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
       <div class="card">
         <div class="card-head"><h2>Стены</h2><span class="step-no">01</span></div>
         <div class="card-body">
+          <p class="hint" style="margin-top:0;">Не знаете точных размеров? Нажмите похожий вариант дома — заполним примерные цифры, а вы поправите под свои.</p>
+          <div class="preset-row" id="wallPresets" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;"></div>
           <div class="walls-head"><span>Стена</span><span>Ширина, м</span><span>Высота, м</span><span></span></div>
           <div id="wallsList"></div>
           <button class="add-btn" id="addWall" type="button">+ добавить стену</button>
-          <p class="hint">Укажите каждую стену отдельно — так точнее считаются угловые и Н-профили.</p>
+          <p class="hint">Укажите каждую стену отдельно (обойдите дом по кругу) — так точнее считаются углы и соединительные планки. Не страшно, если размеры примерные — на смету можно заложить запас ниже.</p>
         </div>
       </div>
 
@@ -346,6 +383,8 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
       <div class="card">
         <div class="card-head"><h2>Углы и цоколь</h2><span class="step-no">03</span></div>
         <div class="card-body">
+          <p class="hint" style="margin-top:0;">Простой прямоугольный дом? Не считайте вручную — нажмите кнопку, и мы сами возьмём 4 угла нужной высоты.</p>
+          <button class="add-btn" id="fillCornersAuto" type="button" style="margin-bottom:14px;">✓ Обычный прямоугольный дом (4 угла)</button>
           <div class="four-col">
             <div>
               <label class="field" for="outerCorners">Внеш. углов, шт</label>
@@ -371,6 +410,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
               <p class="hint" style="margin-top:6px;">Пусто — возьмём сумму ширин стен.</p>
             </div>
           </div>
+          <div id="cornerTypeBox" style="margin-top:14px;"></div>
         </div>
       </div>
 
@@ -419,7 +459,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
 
     <!-- RIGHT: RESULTS -->
     <div class="sticky">
-      <div class="card">
+      <div class="card" id="smetaCard">
         <div class="card-head"><h2>Смета</h2><span class="step-no" id="collectionBadge">—</span></div>
 
         <div class="summary-tiles">
@@ -472,6 +512,14 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
   </div>
 
   <footer>Калькулятор фасада · независимый инструмент предварительного расчёта, не является официальной сметой Ю-Пласт</footer>
+</div>
+
+<div class="mobile-total-bar" id="mobileTotalBar">
+  <div>
+    <div class="mtb-label">Итого по прайсу</div>
+    <div class="mtb-num" id="mtbTotal">—</div>
+  </div>
+  <button type="button" id="mtbJump">Смотреть смету ↓</button>
 </div>
 
 <script>
@@ -557,6 +605,8 @@ var DECOR_CATALOG = [
     useSoffit: false,
     soffitIdx: 0,
     soffitColor: SOFFIT_CATALOG[0].colors[0],
+    cornerType: 'naruzhnyy-ugol',
+    cornerColorIdx: 0,
     decorQty: {}, // id -> qty
     waste: 10
   };
@@ -689,6 +739,49 @@ var DECOR_CATALOG = [
   document.getElementById('addOpening').addEventListener('click', function(){
     state.openings.push({label:'Окно', qty:1, w:1.2, h:1.4}); renderOpenings(); recalc();
   });
+
+  // ---------- quick-start house presets (for people who don't know exact sizes) ----------
+  var WALL_PRESETS = [
+    { label:'Дом 6×8 м, 1 этаж', walls:[{w:6,h:3},{w:8,h:3},{w:6,h:3},{w:8,h:3}] },
+    { label:'Дом 8×10 м, 1 этаж', walls:[{w:8,h:3},{w:10,h:3},{w:8,h:3},{w:10,h:3}] },
+    { label:'Дом 8×10 м, 2 этажа', walls:[{w:8,h:6},{w:10,h:6},{w:8,h:6},{w:10,h:6}] },
+    { label:'Дом 10×12 м, 2 этажа', walls:[{w:10,h:6},{w:12,h:6},{w:10,h:6},{w:12,h:6}] }
+  ];
+  var wallPresetsBox = document.getElementById('wallPresets');
+  if(wallPresetsBox){
+    WALL_PRESETS.forEach(function(p){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'pill'; b.textContent = p.label;
+      b.style.cssText = 'padding:9px 14px; border-radius:20px; border:1px solid var(--line-strong); background:var(--surface); cursor:pointer; font-size:13px;';
+      b.addEventListener('click', function(){
+        state.walls = p.walls.map(function(w){ return {w:w.w, h:w.h}; });
+        renderWalls(); recalc();
+      });
+      wallPresetsBox.appendChild(b);
+    });
+  }
+
+  // ---------- one-click "regular rectangular house" corner fill ----------
+  var fillCornersBtn = document.getElementById('fillCornersAuto');
+  if(fillCornersBtn){
+    fillCornersBtn.addEventListener('click', function(){
+      var avgH = state.walls.length ? (sum(state.walls, function(w){return w.h;}) / state.walls.length) : 3;
+      document.getElementById('outerCorners').value = 4;
+      document.getElementById('outerHeight').value = avgH ? +avgH.toFixed(1) : 3;
+      document.getElementById('innerCorners').value = 0;
+      document.getElementById('innerHeight').value = 0;
+      recalc();
+    });
+  }
+
+  // ---------- mobile sticky total bar: jump to smeta ----------
+  var mtbJump = document.getElementById('mtbJump');
+  if(mtbJump){
+    mtbJump.addEventListener('click', function(){
+      var el = document.getElementById('smetaCard');
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
 
   // ---------- price tier tabs ----------
   var tierTabsEl = document.getElementById('tierTabs');
@@ -835,6 +928,74 @@ var DECOR_CATALOG = [
   // ---------- calc ----------
   function sum(arr, fn){ return arr.reduce(function(a,x){return a+fn(x);},0); }
   var accByIdC = {}; ACCESSORIES_CATALOG.forEach(function(a){ accByIdC[a.id]=a; });
+  var decorByIdC = {}; DECOR_CATALOG.forEach(function(a){ decorByIdC[a.id]=a; });
+
+  var CORNER_OPTIONS = [
+    { id:'naruzhnyy-ugol', cat:accByIdC, title:'Стандартный наружный угол', desc:'Классика, аккуратно и надёжно — подходит под любую коллекцию.' },
+    { id:'ugol-dekorativnyy', cat:decorByIdC, title:'🔥 Широкие мощные углы Up Decor', desc:'Массивный профиль с фактурой камня — дом выглядит солиднее, углы визуально «держат» весь фасад.' },
+    { id:'dobor-110', cat:decorByIdC, title:'💪 Ещё мощнее — Добор 110 мм Up Decor', desc:'Самый крупный профиль в линейке: угол становится настоящим архитектурным акцентом, доступен в трёх цветах.',
+      colors:[ {name:'Белый', itemId:'dobor-110'}, {name:'Графитовый', itemId:'dobor-110-2'}, {name:'Коричневый', itemId:'dobor-110-2'} ] }
+  ];
+
+  function activeCornerOpt(){ return CORNER_OPTIONS.find(function(o){return o.id===state.cornerType;}) || CORNER_OPTIONS[0]; }
+  function activeCornerItem(){
+    var opt = activeCornerOpt();
+    if(opt.colors){
+      var c = opt.colors[state.cornerColorIdx||0] || opt.colors[0];
+      return decorByIdC[c.itemId];
+    }
+    return opt.cat[opt.id];
+  }
+  function activeCornerName(){
+    var opt = activeCornerOpt();
+    if(opt.colors){
+      var c = opt.colors[state.cornerColorIdx||0] || opt.colors[0];
+      return decorByIdC[c.itemId].name.split(',')[0] + ', ' + c.name;
+    }
+    var item = opt.cat[opt.id];
+    return item ? item.name : 'Наружный угол';
+  }
+
+  function renderCornerType(){
+    var box = document.getElementById('cornerTypeBox');
+    if(!box) return;
+    var html = '<label class="field">Тип наружного угла</label><div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">';
+    CORNER_OPTIONS.forEach(function(opt){
+      var previewItem = opt.colors ? decorByIdC[opt.colors[0].itemId] : opt.cat[opt.id];
+      var active = state.cornerType === opt.id;
+      html += '<button type="button" class="corner-opt" data-corner="'+opt.id+'" style="text-align:left; padding:10px 12px; border-radius:8px; cursor:pointer; border:1px solid '+(active?'var(--accent)':'var(--line-strong)')+'; background:'+(active?'var(--accent-soft)':'var(--surface)')+';">'+
+        '<div style="font-weight:700; font-size:13.5px;">'+opt.title+'</div>'+
+        '<div style="font-size:12px; color:var(--ink-soft); margin-top:3px;">'+opt.desc+'</div>'+
+        (previewItem ? '<div style="font-size:12px; margin-top:5px; font-family:\'IBM Plex Mono\',monospace;">от '+fmtMoney(previewItem[priceKey('Pc')])+' / шт</div>' : '')+
+      '</button>';
+      if(active && opt.colors){
+        html += '<div style="display:flex; gap:8px; flex-wrap:wrap; margin:-2px 0 2px 4px;">';
+        opt.colors.forEach(function(c, i){
+          var colActive = (state.cornerColorIdx||0) === i;
+          html += '<button type="button" class="corner-color-opt" data-idx="'+i+'" style="padding:6px 12px; border-radius:20px; cursor:pointer; font-size:12.5px; border:1px solid '+(colActive?'var(--accent)':'var(--line-strong)')+'; background:'+(colActive?'var(--accent)':'var(--surface)')+'; color:'+(colActive?'var(--accent-ink)':'var(--ink)')+';">'+c.name+'</button>';
+        });
+        html += '</div>';
+      }
+    });
+    html += '</div>';
+    box.innerHTML = html;
+    Array.prototype.forEach.call(box.querySelectorAll('.corner-opt'), function(btn){
+      btn.addEventListener('click', function(){
+        state.cornerType = btn.dataset.corner;
+        state.cornerColorIdx = 0;
+        renderCornerType();
+        recalc();
+      });
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.corner-color-opt'), function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        state.cornerColorIdx = +btn.dataset.idx;
+        renderCornerType();
+        recalc();
+      });
+    });
+  }
 
   function recalc(){
     var siding = SIDING_CATALOG[state.sidingIdx];
@@ -860,7 +1021,9 @@ var DECOR_CATALOG = [
     var innerH = parseFloat(document.getElementById('innerHeight').value)||0;
     var soffitArea = state.useSoffit ? (parseFloat(document.getElementById('soffitArea').value)||0) : 0;
 
-    var outerCornerQty = Math.ceil((outerCorners*outerH*wasteF)/TRIM_LEN) || 0;
+    var cornerItem = activeCornerItem();
+    var cornerLen = (cornerItem && cornerItem.lenM) || TRIM_LEN;
+    var outerCornerQty = Math.ceil((outerCorners*outerH*wasteF)/cornerLen) || 0;
     var innerCornerQty = Math.ceil((innerCorners*innerH*wasteF)/TRIM_LEN) || 0;
 
     var openingsPerimeter = sum(state.openings, function(o){ return o.qty*2*(o.w+o.h); });
@@ -881,7 +1044,7 @@ var DECOR_CATALOG = [
     document.getElementById('tileNetArea').textContent = netArea.toFixed(1)+' м²';
     document.getElementById('collectionBadge').textContent = siding.name.split(' ').slice(0,2).join(' ');
 
-    var accJ = accByIdC['j-planka'], accOuter = accByIdC['naruzhnyy-ugol'], accH = accByIdC['soedinitelnaya-planka'], accFin = accByIdC['zavershayuschaya-planka'];
+    var accJ = accByIdC['j-planka'], accH = accByIdC['soedinitelnaya-planka'], accFin = accByIdC['zavershayuschaya-planka'];
 
     var rows = [
       {name:siding.name+' — '+state.sidingColor, desc:'основной сайдинг, '+siding.pack+' шт/уп.', qty:panels+' шт · '+packs+' уп.', sum:sidingCost}
@@ -889,8 +1052,8 @@ var DECOR_CATALOG = [
     var jCost = jTrimQty * accJ[priceKey('Pc')];
     rows.push({name:accJ.name, desc:'старт/окна-двери'+(soffitArea>0?'/софит':'')+', периметр+проёмы', qty:jTrimQty+' шт', sum:jCost});
 
-    var outerCost = outerCornerQty * accOuter[priceKey('Pc')];
-    rows.push({name:accOuter.name, desc:outerCorners+' угл. × '+outerH.toFixed(1)+' м', qty:outerCornerQty+' шт', sum:outerCost});
+    var outerCost = outerCornerQty * (cornerItem ? cornerItem[priceKey('Pc')] : 0);
+    rows.push({name:activeCornerName(), desc:outerCorners+' угл. × '+outerH.toFixed(1)+' м', qty:outerCornerQty+' шт', sum:outerCost});
 
     var innerCost = 0;
     if(innerCorners>0){
@@ -925,6 +1088,8 @@ var DECOR_CATALOG = [
 
     document.getElementById('tileTotal').textContent = fmtMoney(totalCost);
     document.getElementById('footTotal').textContent = fmtMoney(totalCost);
+    var mtbTotalEl = document.getElementById('mtbTotal');
+    if(mtbTotalEl) mtbTotalEl.textContent = fmtMoney(totalCost);
 
     var body = document.getElementById('partsBody');
     body.innerHTML = '';
@@ -976,6 +1141,7 @@ var DECOR_CATALOG = [
     document.getElementById('perimeter').value='';
     document.getElementById('soffitArea').value=0;
     document.getElementById('waste').value=10; state.waste=10; wasteVal.textContent='10%';
+    state.cornerType='naruzhnyy-ugol'; state.cornerColorIdx=0; renderCornerType();
     renderWalls(); renderOpenings(); renderDecorList(); recalc();
   });
 
@@ -988,20 +1154,16 @@ var DECOR_CATALOG = [
   renderSoffitLine();
   renderSoffitSwatches();
   updateSoffitVisibility();
+  renderCornerType();
   renderDecorList();
   recalc();
 
   var extraInputs = ['outerCorners','outerHeight','innerCorners','innerHeight','perimeter','soffitArea'];
   extraInputs.forEach(function(id){ document.getElementById(id).addEventListener('input', recalc); });
 
-  // ---------- photo intake: 4 facade shots -> Claude vision -> autofill ----------
-  var PHOTO_SLOTS = [
-    {key:'front', tag:'01', label:'Фасад спереди'},
-    {key:'back',  tag:'02', label:'Фасад сзади'},
-    {key:'left',  tag:'03', label:'Фасад слева'},
-    {key:'right', tag:'04', label:'Фасад справа'}
-  ];
-  var photos = {}; // key -> File
+  // ---------- photo intake: 1–5 facade shots -> Claude vision -> autofill ----------
+  var MAX_PHOTOS = 5;
+  var photos = []; // array of File, in the order the person added them
   var photoGrid = document.getElementById('photoGrid');
   var aiBtn = document.getElementById('aiBtn');
   var aiBtnLabel = document.getElementById('aiBtnLabel');
@@ -1009,33 +1171,57 @@ var DECOR_CATALOG = [
 
   function renderPhotoGrid(){
     photoGrid.innerHTML = '';
-    PHOTO_SLOTS.forEach(function(slot){
+    photos.forEach(function(file, i){
       var div = document.createElement('div');
-      div.className = 'photo-slot' + (photos[slot.key] ? ' filled' : '');
-      var inner = '<span class="ph-tag">'+slot.tag+'</span>';
-      if(photos[slot.key]){
-        inner += '<img src="'+URL.createObjectURL(photos[slot.key])+'" alt="">' +
-                 '<span class="ph-check">✓</span>';
-      } else {
-        inner += '<span class="ph-label">'+slot.label+'<br>нажмите или перетащите фото</span>';
-      }
-      inner += '<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-key="'+slot.key+'">';
-      div.innerHTML = inner;
+      div.className = 'photo-slot filled';
+      div.innerHTML = '<span class="ph-tag">'+(i+1)+'</span>' +
+        '<img src="'+URL.createObjectURL(file)+'" alt="">' +
+        '<button type="button" class="ph-remove" data-i="'+i+'" title="Убрать фото" ' +
+          'style="position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; border:none; background:rgba(0,0,0,.55); color:#fff; cursor:pointer; font-size:13px; line-height:1;">✕</button>';
       photoGrid.appendChild(div);
     });
-    Array.prototype.forEach.call(photoGrid.querySelectorAll('input[type=file]'), function(inp){
-      inp.addEventListener('change', function(){
-        if(inp.files && inp.files[0]){ photos[inp.dataset.key] = inp.files[0]; renderPhotoGrid(); updateAiBtn(); }
+    if(photos.length < MAX_PHOTOS){
+      var addDiv = document.createElement('div');
+      addDiv.className = 'photo-slot';
+      addDiv.innerHTML = '<span class="ph-label">+ фото</span>' +
+        '<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple>';
+      photoGrid.appendChild(addDiv);
+      addDiv.querySelector('input[type=file]').addEventListener('change', function(e){
+        addPhotos(e.target.files);
+        e.target.value = '';
+      });
+    }
+    Array.prototype.forEach.call(photoGrid.querySelectorAll('.ph-remove'), function(btn){
+      btn.addEventListener('click', function(){
+        photos.splice(+btn.dataset.i, 1);
+        renderPhotoGrid(); updateAiBtn();
       });
     });
   }
+  function addPhotos(fileList){
+    var files = Array.prototype.slice.call(fileList || []);
+    files.forEach(function(file){
+      if(photos.length < MAX_PHOTOS) photos.push(file);
+    });
+    renderPhotoGrid();
+    updateAiBtn();
+  }
   function updateAiBtn(){
-    var count = PHOTO_SLOTS.filter(function(s){return !!photos[s.key];}).length;
-    aiBtn.disabled = count < 4;
-    aiBtnLabel.textContent = count < 4 ? ('Загружено '+count+' из 4 фото') : 'Рассчитать по фото';
+    var count = photos.length;
+    aiBtn.disabled = count < 1;
+    if(count === 0) aiBtnLabel.textContent = 'Загрузите хотя бы 1 фото';
+    else aiBtnLabel.textContent = 'Рассчитать по фото ('+count+(count<MAX_PHOTOS ? ', можно ещё до '+(MAX_PHOTOS-count) : '')+')';
   }
   renderPhotoGrid();
   updateAiBtn();
+
+  var photoUploadAll = document.getElementById('photoUploadAll');
+  if(photoUploadAll){
+    photoUploadAll.addEventListener('change', function(){
+      addPhotos(photoUploadAll.files);
+      photoUploadAll.value = '';
+    });
+  }
 
   // remember a custom backend endpoint per-browser (never sent anywhere but used to call it)
   var apiEndpointInput = document.getElementById('apiEndpoint');
@@ -1109,14 +1295,14 @@ var DECOR_CATALOG = [
       return;
     }
 
-    var refH = parseFloat(document.getElementById('refHeight').value) || 3;
-    var imgList = PHOTO_SLOTS.map(function(s){ return photos[s.key]; });
+    var refH = parseFloat(document.getElementById('refHeight').value) || 0;
+    var imgList = photos.slice();
 
     aiBtn.classList.add('busy'); aiBtn.disabled = true;
     aiBtnLabel.textContent = 'Считаю по фото…';
-    showStatus('info', 'Claude смотрит на 4 фото фасада и оценивает размеры стен, проёмов и углов. Обычно 10–40 секунд…');
+    showStatus('info', 'Claude смотрит на '+imgList.length+' фото фасада и оценивает размеры стен, проёмов и углов. Обычно 10–40 секунд…');
 
-    var prompt = buildPrompt(refH, 4);
+    var prompt = buildPrompt(refH, imgList.length);
 
     try{
       var data = await sample.json(prompt, { images: imgList, modelTier: 'default', cache: false });
@@ -1138,18 +1324,18 @@ var DECOR_CATALOG = [
 
   // ---- Path B: your own backend holding the vision API key ----
   async function runViaOwnServer(endpoint){
-    var refH = parseFloat(document.getElementById('refHeight').value) || 3;
+    var refH = parseFloat(document.getElementById('refHeight').value) || 0;
 
     aiBtn.classList.add('busy'); aiBtn.disabled = true;
     aiBtnLabel.textContent = 'Считаю по фото…';
-    showStatus('info', 'Отправляю фото на ваш сервер ('+endpoint+') и жду ответ. Обычно 10–40 секунд…');
+    showStatus('info', 'Отправляю '+photos.length+' фото на ваш сервер ('+endpoint+') и жду ответ. Обычно 10–40 секунд…');
 
     try{
       var form = new FormData();
-      PHOTO_SLOTS.forEach(function(s){
-        if(photos[s.key]) form.append('photos', photos[s.key], s.key+'.jpg');
+      photos.forEach(function(file, i){
+        form.append('photos', file, 'photo'+(i+1)+'.jpg');
       });
-      form.append('refHeight', String(refH));
+      form.append('refHeight', String(refH || 3));
 
       var resp = await fetch(endpoint + '/estimate', { method:'POST', body: form });
       if(!resp.ok){
@@ -1168,17 +1354,21 @@ var DECOR_CATALOG = [
   }
 
   function buildPrompt(refH, n){
-    var labels = PHOTO_SLOTS.slice(0,n).map(function(s){return s.label;}).join(', ');
+    var heightLine = refH > 0
+      ? 'Известная высота стены от отмостки/цоколя до карниза (одна и та же для всех фото, используй как масштаб): ' + refH + ' м. '
+      : 'Точная высота стены не указана — оцени её сам по обычным пропорциям одноэтажного/двухэтажного дома и укажи, какую высоту предположил, в notes. ';
+    var refHForFormat = refH > 0 ? refH : 3;
     return 'Ты помогаешь рассчитать виниловый сайдинг по фотографиям дома. ' +
-      'Даны фото фасадов в таком порядке: ' + labels + '. ' +
-      'Известная высота стены от отмостки/цоколя до карниза (одна и та же для всех фасадов, используй как масштаб): ' + refH + ' м. ' +
-      'Для каждого фасада на глаз оцени ширину стены в метрах (используя высоту как масштаб и пропорции дома), ' +
+      'Дано ' + n + ' фото фасада(ов) — это могут быть фото с разных сторон дома, фото с проекта/визуализации или просто одно фото, если больше нет. ' +
+      heightLine +
+      'Если фото несколько — считай, что это разные стороны одного дома, и не дублируй одну и ту же стену дважды. ' +
+      'Для каждого видимого фасада на глаз оцени ширину стены в метрах (используя высоту как масштаб и пропорции дома), ' +
       'посчитай видимые окна (количество и среднюю ширину/высоту, м) и двери (количество и среднюю ширину/высоту, м) на этом фасаде, ' +
       'и есть ли на фасаде фронтон (треугольная часть под крышей) — если да, добавь его площадь к площади стены приблизительно. ' +
       'Также оцени общее число НАРУЖНЫХ углов дома (обычно 4 для прямоугольного дома, больше для сложной формы) и число ВНУТРЕННИХ углов (0, если дом простой прямоугольный, больше если есть пристройки/эркеры). ' +
       'Если фасад плохо виден или размыт — дай разумную оценку по пропорциям, но отметь это в notes. ' +
       'Ответь СТРОГО JSON без пояснений вокруг, такой формы:\n' +
-      '{"walls":[{"label":"Фасад спереди","w":0,"h":'+refH+'}, ...],' +
+      '{"walls":[{"label":"Фасад спереди","w":0,"h":'+refHForFormat+'}, ...],' +
       '"openings":[{"label":"Окна","qty":0,"w":0,"h":0},{"label":"Двери","qty":0,"w":0,"h":0}],' +
       '"outerCorners":4,"innerCorners":0,"notes":"коротко, что не удалось разглядеть или что предположено"}';
   }
