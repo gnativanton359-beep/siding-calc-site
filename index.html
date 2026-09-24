@@ -605,7 +605,7 @@ var DECOR_CATALOG = [
     useSoffit: false,
     soffitIdx: 0,
     soffitColor: SOFFIT_CATALOG[0].colors[0],
-    cornerType: 'naruzhnyy-ugol',
+    cornerType: 'dobor-110',
     cornerColorIdx: 0,
     decorQty: {}, // id -> qty
     waste: 10
@@ -1141,7 +1141,7 @@ var DECOR_CATALOG = [
     document.getElementById('perimeter').value='';
     document.getElementById('soffitArea').value=0;
     document.getElementById('waste').value=10; state.waste=10; wasteVal.textContent='10%';
-    state.cornerType='naruzhnyy-ugol'; state.cornerColorIdx=0; renderCornerType();
+    state.cornerType='dobor-110'; state.cornerColorIdx=0; renderCornerType();
     renderWalls(); renderOpenings(); renderDecorList(); recalc();
   });
 
