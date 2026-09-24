@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Калькулятор фасада Ю-Пласт</title>
 
 <style>
@@ -118,6 +118,11 @@ input[type=number], input[type=text], select{
   background:var(--surface-2); border:1px solid var(--line-strong); border-radius:7px;
   padding:8px 10px; outline:none;
 }
+select{ -webkit-appearance:none; appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-soft) 50%),linear-gradient(135deg,var(--ink-soft) 50%,transparent 50%);
+  background-position: calc(100% - 16px) center, calc(100% - 11px) center; background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+  padding-right:28px;
+}
 input[type=number]:focus, input[type=text]:focus, select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
 input[type=number]{font-family:'IBM Plex Mono',monospace;}
 
@@ -143,20 +148,25 @@ input[type=number]{font-family:'IBM Plex Mono',monospace;}
 .add-btn:hover{border-color:var(--accent); color:var(--accent);}
 
 .two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.three-col{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
 .four-col{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
-@media (max-width:520px){ .four-col{grid-template-columns:1fr 1fr;} }
+@media (max-width:520px){ .four-col{grid-template-columns:1fr 1fr;} .three-col{grid-template-columns:1fr;} }
 
 .hint{font-size:12.5px; color:var(--ink-soft); margin-block-start:4px;}
+.checkbox-row{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600;}
+.checkbox-row input{width:16px; height:16px; accent-color:var(--accent);}
 
-/* ---------- collection / color picker ---------- */
-.collection-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-block-end:14px;}
-.coll-btn{
-  font:inherit; font-size:13px; font-weight:600; cursor:pointer;
-  padding:8px 13px; border-radius:8px; border:1px solid var(--line-strong);
+/* ---------- price tier pills ---------- */
+.tier-tabs{display:flex; gap:6px; margin-block-end:14px;}
+.tier-btn{
+  flex:1; font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; text-align:center;
+  padding:8px 6px; border-radius:8px; border:1px solid var(--line-strong);
   background:var(--surface-2); color:var(--ink);
 }
-.coll-btn[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink);}
-.coll-meta{font-size:13px; color:var(--ink-soft); margin-block-end:14px;}
+.tier-btn[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+/* ---------- material line / color picker ---------- */
+.coll-meta{font-size:13px; color:var(--ink-soft); margin:10px 0 14px;}
 .coll-meta b{color:var(--ink); font-weight:600;}
 
 .swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(108px,1fr)); gap:10px;}
@@ -168,28 +178,46 @@ input[type=number]{font-family:'IBM Plex Mono',monospace;}
 .swatch .chip{width:100%; aspect-ratio:4/3; border-radius:6px; border:1px solid rgba(0,0,0,.12); margin-block-end:6px;}
 .swatch .name{font-size:12px; font-weight:600; display:block; line-height:1.25;}
 
+/* ---------- decor list ---------- */
+.decor-list{display:flex; flex-direction:column; gap:8px;}
+.decor-row{
+  display:grid; grid-template-columns:1fr 90px auto; gap:10px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2);
+}
+.decor-row .dname{font-size:13px; font-weight:600;}
+.decor-row .dmeta{font-size:11.5px; color:var(--ink-soft); font-weight:500;}
+.decor-row .dprice{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); white-space:nowrap;}
+.qty-stepper{display:flex; align-items:center; gap:4px;}
+.qty-stepper button{
+  width:26px; height:26px; border-radius:6px; border:1px solid var(--line-strong); background:var(--surface);
+  color:var(--ink); font-size:14px; cursor:pointer; line-height:1;
+}
+.qty-stepper input{width:38px; text-align:center; padding:4px 2px; font-size:13px;}
+
 /* ---------- results ---------- */
 .sticky{position:sticky; top:calc(env(safe-area-inset-top,0px) + 16px);}
 .summary-tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 18px;}
 .tile{background:var(--surface-2); border:1px solid var(--line); border-radius:9px; padding:12px 13px;}
 .tile .num{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; line-height:1.1;}
 .tile .lbl{font-size:11.5px; color:var(--ink-soft); margin-block-start:3px;}
-.tile.accent{background:var(--accent-soft);}
-.tile.accent .num{color:var(--accent);}
+.tile.accent{background:var(--accent-soft); grid-column:1 / -1;}
+.tile.accent .num{color:var(--accent); font-size:30px;}
 
-table.parts{width:100%; border-collapse:collapse; font-size:13.5px;}
+table.parts{width:100%; border-collapse:collapse; font-size:13px;}
 table.parts th{
-  text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft);
+  text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-soft);
   font-weight:600; padding:6px 6px; border-bottom:1px solid var(--line-strong);
 }
 table.parts td{padding:9px 6px; border-bottom:1px solid var(--line);}
 table.parts tr:last-child td{border-bottom:none;}
 table.parts td.qty{font-family:'IBM Plex Mono',monospace; font-weight:600; text-align:right; white-space:nowrap;}
+table.parts td.sum{font-family:'IBM Plex Mono',monospace; font-weight:600; text-align:right; white-space:nowrap; color:var(--accent);}
 table.parts td.name{font-weight:500;}
-table.parts td.desc{color:var(--ink-soft); font-size:12px;}
+table.parts td.desc{color:var(--ink-soft); font-size:11.5px;}
+table.parts tfoot td{border-top:2px solid var(--line-strong); border-bottom:none; font-weight:700; padding-top:11px;}
 .wrap-x{overflow-x:auto;}
 
-.waste-row{display:flex; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--surface-2); border-radius:0 0 10px 10px;}
+.waste-row{display:flex; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--surface-2);}
 .waste-row input[type=range]{flex:1; accent-color:var(--accent);}
 .waste-row .val{font-family:'IBM Plex Mono',monospace; font-weight:600; min-width:38px; text-align:right;}
 
@@ -261,9 +289,9 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     <div>
       <div class="brand"><span class="mark">Ю·ПЛАСТ</span></div>
       <h1>Калькулятор сайдинга и комплектующих</h1>
-      <p>Подбор фактуры и цвета, расчёт панелей и доборных элементов по размерам дома — для предварительной сметы перед заказом.</p>
+      <p>Подбор фактуры, цвета и софита, расчёт панелей, доборных элементов и стоимости по прайсу — для предварительной сметы перед заказом.</p>
     </div>
-    <div class="src">по коллекциям сайдинга<br><a href="https://b2b.faceup.u-plast.by/" target="_blank" rel="noopener">b2b.faceup.u-plast.by</a></div>
+    <div class="src">прайс действителен с 01.07.2026<br>цены в ₽, с НДС 22%</div>
   </div>
 
   <div class="card photo-card">
@@ -284,7 +312,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
         <div>
           <label class="field" for="apiEndpoint">Свой сервер (API endpoint), необязательно</label>
           <input type="text" id="apiEndpoint" placeholder="https://ваш-сервер.onrender.com">
-          <p class="hint" style="margin-top:6px;">Если указан — фото отправляются на ваш backend с собственным Anthropic-ключом вместо встроенного распознавания. Адрес сохраняется в этом браузере.</p>
+          <p class="hint" style="margin-top:6px;">Если указан — фото отправляются на ваш backend вместо встроенного распознавания. Адрес сохраняется в этом браузере.</p>
         </div>
       </div>
       <div class="ai-status" id="aiStatus"></div>
@@ -311,7 +339,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
           <div class="openings-head"><span>Проём</span><span>Кол-во</span><span>Ширина, м</span><span>Высота, м</span><span></span></div>
           <div id="openingsList"></div>
           <button class="add-btn" id="addOpening" type="button">+ добавить проём</button>
-          <p class="hint">Площадь проёмов вычитается из площади стен; периметр проёмов идёт на плановую и финишную планку.</p>
+          <p class="hint">Площадь проёмов вычитается из площади стен; периметр проёмов идёт на J-планку/наличники.</p>
         </div>
       </div>
 
@@ -321,11 +349,11 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
           <div class="four-col">
             <div>
               <label class="field" for="outerCorners">Внеш. углов, шт</label>
-              <input type="number" id="outerCorners" min="0" value="4">
+              <input type="number" id="outerCorners" min="0" value="0">
             </div>
             <div>
               <label class="field" for="outerHeight">Высота угла, м</label>
-              <input type="number" id="outerHeight" min="0" step="0.1" value="3">
+              <input type="number" id="outerHeight" min="0" step="0.1" value="0">
             </div>
             <div>
               <label class="field" for="innerCorners">Внутр. углов, шт</label>
@@ -333,7 +361,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
             </div>
             <div>
               <label class="field" for="innerHeight">Высота угла, м</label>
-              <input type="number" id="innerHeight" min="0" step="0.1" value="3">
+              <input type="number" id="innerHeight" min="0" step="0.1" value="0">
             </div>
           </div>
           <div class="two-col" style="margin-top:12px;">
@@ -342,21 +370,48 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
               <input type="number" id="perimeter" min="0" step="0.1" value="">
               <p class="hint" style="margin-top:6px;">Пусто — возьмём сумму ширин стен.</p>
             </div>
-            <div>
-              <label class="field" for="soffitArea">Свесы кровли (софит), м²</label>
-              <input type="number" id="soffitArea" min="0" step="0.5" value="0">
-              <p class="hint" style="margin-top:6px;">0 — если подшивка не нужна.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Материал фасада</h2><span class="step-no">04</span></div>
+        <div class="card-body">
+          <div class="tier-tabs" id="tierTabs"></div>
+          <label class="field" for="sidingLine">Коллекция / линейка</label>
+          <select id="sidingLine"></select>
+          <p class="coll-meta" id="sidingMeta"></p>
+          <div class="swatches" id="sidingSwatches"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Софит</h2><span class="step-no">05</span></div>
+        <div class="card-body">
+          <label class="checkbox-row" style="margin-bottom:14px;">
+            <input type="checkbox" id="useSoffit">
+            Нужна подшивка свесов кровли софитом
+          </label>
+          <div id="soffitFields">
+            <label class="field" for="soffitLine">Линейка софита</label>
+            <select id="soffitLine"></select>
+            <p class="coll-meta" id="soffitMeta"></p>
+            <div class="swatches" id="soffitSwatches"></div>
+            <div class="two-col" style="margin-top:14px;">
+              <div>
+                <label class="field" for="soffitArea">Площадь свесов, м²</label>
+                <input type="number" id="soffitArea" min="0" step="0.5" value="0">
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head"><h2>Коллекция и цвет</h2><span class="step-no">04</span></div>
+        <div class="card-head"><h2>Декор и доборы UP Decor</h2><span class="step-no">06</span></div>
         <div class="card-body">
-          <div class="collection-tabs" id="collectionTabs"></div>
-          <p class="coll-meta" id="collMeta"></p>
-          <div class="swatches" id="swatches"></div>
+          <p class="hint" style="margin:0 0 12px;">Необязательно — наличники, доборы, углы и галтели для оформления проёмов и примыканий. Выберите нужное количество.</p>
+          <div class="decor-list" id="decorList"></div>
         </div>
       </div>
 
@@ -369,6 +424,10 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
 
         <div class="summary-tiles">
           <div class="tile accent">
+            <div class="num" id="tileTotal">—</div>
+            <div class="lbl">итого по прайсу, ₽</div>
+          </div>
+          <div class="tile">
             <div class="num" id="tilePanels">—</div>
             <div class="lbl">панелей сайдинга</div>
           </div>
@@ -389,8 +448,9 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
         <div class="card-body" style="padding-top:0;">
           <div class="wrap-x">
             <table class="parts" id="partsTable">
-              <thead><tr><th>Элемент</th><th>Назначение</th><th style="text-align:right">Кол-во</th></tr></thead>
+              <thead><tr><th>Элемент</th><th>Назначение</th><th style="text-align:right">Кол-во</th><th style="text-align:right">Сумма</th></tr></thead>
               <tbody id="partsBody"></tbody>
+              <tfoot><tr><td colspan="3">Итого</td><td class="sum" id="footTotal">—</td></tr></tfoot>
             </table>
           </div>
         </div>
@@ -406,103 +466,109 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
           <button class="btn ghost" id="resetBtn" type="button">Сбросить</button>
           <span class="copy-msg" id="copyMsg" hidden>Скопировано ✓</span>
         </div>
-        <p class="note">Расчёт ориентировочный — для точной сметы и подбора остатков на складе уточняйте у партнёра U‑Plast. Размеры панелей и раскладка цветов даны по коллекциям сайдинга, фасадных панелей и софитов Ю‑Пласт.</p>
+        <p class="note">Расчёт ориентировочный: формулы для доборных элементов — стандартная практика подсчёта (периметр/высота ÷ 3 м на планку), точную раскладку уточняйте у партнёра U-Plast. Цены и размеры — из прайс-листа, действителен с 01.07.2026.</p>
       </div>
     </div>
   </div>
 
-  <footer>Калькулятор фасада · независимый инструмент предварительного расчёта, не является официальной сметой Ю‑Пласт</footer>
+  <footer>Калькулятор фасада · независимый инструмент предварительного расчёта, не является официальной сметой Ю-Пласт</footer>
 </div>
 
 <script>
+// ==================== ASSORTMENT DATA (from price list, valid from 01.07.2026) ====================
+var SIDING_CATALOG = [
+    {id:"hokla-s-lock-skandinaviya",name:"Hokla S-Lock СКАНДИНАВИЯ",texture:"shake",panelLen:1.95,panelW:0.197,area:0.3841,pack:16,priceOptM2:897.28,priceBldM2:942.14,priceRtlM2:1031.87,priceOptPc:344.55,priceBldPc:361.78,priceRtlPc:396.24,colors:["Полуночно-синий","Слоновая кость","Древесный тауп","Ольха натуральная","Песчаный берег","Туманный фьорд"]},
+    {id:"hokla-s-lock-karyala",name:"Hokla S-Lock КАРЬЯЛА",texture:"shake",panelLen:1.97,panelW:0.18,area:0.3546,pack:16,priceOptM2:897.28,priceBldM2:942.14,priceRtlM2:1031.87,priceOptPc:318.53,priceBldPc:334.46,priceRtlPc:366.31,colors:["Дуб медовый","Древесный тауп","Ольха натуральная","Песчаный берег","Туманный фьорд"]},
+    {id:"hokla-s-lock-schepa",name:"Hokla S-Lock ЩЕПА",texture:"shake",panelLen:2.0,panelW:0.206,area:0.412,pack:16,priceOptM2:897.28,priceBldM2:942.14,priceRtlM2:1031.87,priceOptPc:367.88,priceBldPc:386.28,priceRtlPc:423.07,colors:["Натуральный орех","Седой дуб","Каштановый","Можжевеловый"]},
+    {id:"hokla-color",name:"Hokla COLOR",texture:"shake",panelLen:2.0,panelW:0.25,area:0.5,pack:15,priceOptM2:836.23,priceBldM2:878.04,priceRtlM2:961.66,priceOptPc:418.11,priceBldPc:439.02,priceRtlPc:480.83,colors:["Голубика","Ирландский мох"]},
+    {id:"hokla-vintazh",name:"Hokla ВИНТАЖ",texture:"shake",panelLen:2.0,panelW:0.25,area:0.5,pack:15,priceOptM2:836.23,priceBldM2:878.04,priceRtlM2:961.66,priceOptPc:418.11,priceBldPc:439.02,priceRtlPc:480.83,colors:["Пепел","Корица"]},
+    {id:"hokla-listvennica",name:"Hokla ЛИСТВЕННИЦА",texture:"shake",panelLen:2.0,panelW:0.25,area:0.5,pack:15,priceOptM2:831.81,priceBldM2:873.4,priceRtlM2:956.58,priceOptPc:415.9,priceBldPc:436.7,priceRtlPc:478.29,colors:["Светлая","Медовая"]},
+    {id:"stone-house-s-lock-taganay",name:"Stone House S-Lock ТАГАНАЙ",texture:"stone",panelLen:1.95,panelW:0.29,area:0.5655,pack:15,priceOptM2:942.13,priceBldM2:989.23,priceRtlM2:1083.44,priceOptPc:537.01,priceBldPc:563.86,priceRtlPc:617.56,colors:["Туманный","Речной","Дикий","Вулканический (прокрашенный шов)"]},
+    {id:"stone-house-s-lock-taganay-2",name:"Stone House S-Lock ТАГАНАЙ",texture:"stone",panelLen:1.95,panelW:0.29,area:0.5655,pack:15,priceOptM2:897.28,priceBldM2:942.14,priceRtlM2:1031.87,priceOptPc:511.45,priceBldPc:537.02,priceRtlPc:588.16,colors:["Высокогорный","Таёжный"]},
+    {id:"stone-house-s-lock-klinker-baltik",name:"Stone House S-Lock КЛИНКЕР БАЛТИК",texture:"stone",panelLen:1.95,panelW:0.292,area:0.5694,pack:15,priceOptM2:942.13,priceBldM2:989.23,priceRtlM2:1083.44,priceOptPc:537.01,priceBldPc:563.86,priceRtlPc:617.56,colors:["Пустыня","Светлая медь","Холодный цемент","Магма"]},
+    {id:"stone-house-s-lock-klinker-nordik",name:"Stone House S-Lock КЛИНКЕР НОРДИК",texture:"stone",panelLen:1.95,panelW:0.292,area:0.5694,pack:15,priceOptM2:942.13,priceBldM2:989.23,priceRtlM2:1083.44,priceOptPc:537.01,priceBldPc:563.86,priceRtlPc:617.56,colors:["Графитовый","Пепел","Дым","Лава","Песок"]},
+    {id:"stone-house-kirpich",name:"Stone House КИРПИЧ",texture:"stone",panelLen:3.025,panelW:0.23,area:0.6957,pack:10,priceOptM2:942.12,priceBldM2:989.23,priceRtlM2:1083.44,priceOptPc:572.85,priceBldPc:687.52,priceRtlPc:752.99,colors:["Белый декорированный шов","Песочный декорированный шов"]},
+    {id:"stone-house-kirpich-2",name:"Stone House КИРПИЧ",texture:"stone",panelLen:3.025,panelW:0.23,area:0.6957,pack:10,priceOptM2:854.49,priceBldM2:897.22,priceRtlM2:982.68,priceOptPc:519.57,priceBldPc:623.57,priceRtlPc:682.96,colors:["Песочный","Коричневый","Бежевый","Графитовый"]},
+    {id:"stone-house-kamen",name:"Stone House КАМЕНЬ",texture:"stone",panelLen:3.025,panelW:0.225,area:0.6806,pack:15,priceOptM2:730.76,priceBldM2:767.3,priceRtlM2:840.37,priceOptPc:496.92,priceBldPc:521.76,priceRtlPc:571.45,colors:["Золотистый","Жжёный","Изумрудный"]},
+    {id:"stone-house-kvarcit",name:"Stone House КВАРЦИТ",texture:"stone",panelLen:2.0,panelW:0.25,area:0.5,pack:15,priceOptM2:769.24,priceBldM2:807.7,priceRtlM2:884.63,priceOptPc:384.62,priceBldPc:403.85,priceRtlPc:442.31,colors:["Светло-бежевый","Светло-серый","Коричневый"]},
+    {id:"stone-house-slanec",name:"Stone House СЛАНЕЦ",texture:"stone",panelLen:2.0,panelW:0.225,area:0.45,pack:15,priceOptM2:769.09,priceBldM2:807.55,priceRtlM2:884.46,priceOptPc:346.09,priceBldPc:363.4,priceRtlPc:398.01,colors:["Бурый","Светло-серый","Бежевый"]},
+    {id:"stone-house-s-lock-rigelnyy-kirpich",name:"Stone House S-Lock РИГЕЛЬНЫЙ КИРПИЧ",texture:"stone",panelLen:1.94,panelW:0.29,area:0.5626,pack:14,priceOptM2:807.55,priceBldM2:847.93,priceRtlM2:928.68,priceOptPc:452.23,priceBldPc:474.84,priceRtlPc:520.06,colors:["Кварц","Грифель","Латуль","Мокко"]},
+    {id:"timberblock-pihta",name:"Timberblock ПИХТА",texture:"wood-timber",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:558.06,priceBldM2:585.97,priceRtlM2:625.03,priceOptPc:391.76,priceBldPc:411.35,priceRtlPc:438.77,colors:["Сахалинская","Алтайская"]},
+    {id:"timberblock-kedr",name:"Timberblock КЕДР",texture:"wood-timber",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:641.34,priceBldM2:673.4,priceRtlM2:750.36,priceOptPc:450.22,priceBldPc:472.73,priceRtlPc:526.75,colors:["Натуральный","Полярный","Светлый"]},
+    {id:"timberblock-el",name:"Timberblock ЕЛЬ",texture:"wood-timber",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:704.61,priceBldM2:739.84,priceRtlM2:824.4,priceOptPc:494.64,priceBldPc:519.37,priceRtlPc:578.73,colors:["Альпийская","Скандинавская","Сибирская"]},
+    {id:"timberblock-dub",name:"Timberblock ДУБ",texture:"wood-timber",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:620.66,priceBldM2:651.69,priceRtlM2:695.14,priceOptPc:435.7,priceBldPc:457.49,priceRtlPc:487.99,colors:["Морёный","Золотой","Натуральный"]},
+    {id:"timberblock-yasen",name:"Timberblock ЯСЕНЬ",texture:"wood-timber",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:615.17,priceBldM2:645.93,priceRtlM2:695.14,priceOptPc:431.85,priceBldPc:453.44,priceRtlPc:487.99,colors:["Золотистый","Белёный"]},
+    {id:"timberblock-planken",name:"Timberblock ПЛАНКЕН",texture:"wood-vert",panelLen:3.0,panelW:0.24,area:0.72,pack:10,priceOptM2:776.9,priceBldM2:815.74,priceRtlM2:908.97,priceOptPc:559.37,priceBldPc:587.33,priceRtlPc:654.46,colors:["Седой","Кленовый","Янтарный","Угольный"]},
+    {id:"timberblock-reyka-fasadnaya",name:"Timberblock РЕЙКА ФАСАДНАЯ",texture:"wood-timber",panelLen:3.0,panelW:0.275,area:0.825,pack:10,priceOptM2:815.75,priceBldM2:856.54,priceRtlM2:954.43,priceOptPc:672.99,priceBldPc:706.64,priceRtlPc:787.4,colors:["Дуб Золотой","Орех Светлый","Орех Темный","Угольный"]},
+    {id:"classic-korabelnyy-brus",name:"Classic КОРАБЕЛЬНЫЙ БРУС",texture:"wood-brus",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:341.63,priceBldM2:358.71,priceRtlM2:392.88,priceOptPc:239.82,priceBldPc:251.82,priceRtlPc:275.8,colors:["Белый","Ванильный","Кофе с молоком","Серый","Зелёный","Бежевый"]},
+    {id:"classic-korabelnyy-brus-2",name:"Classic КОРАБЕЛЬНЫЙ БРУС",texture:"wood-brus",panelLen:3.05,panelW:0.23,area:0.7015,pack:10,priceOptM2:362.0,priceBldM2:380.0,priceRtlM2:416.0,priceOptPc:254.12,priceBldPc:266.76,priceRtlPc:292.03,colors:["Льняной","Пшеничный","Озерный","Родниковый"]}
+  ];
+
+var SOFFIT_CATALOG = [
+    {id:"pro-sofit-1",name:"PRO СОФИТ (перфорированный/частичный/глухой)",texture:"soffit",panelLen:3.0,panelW:0.3,area:0.9,pack:10,priceOptM2:703.6,priceBldM2:738.78,priceRtlM2:809.15,priceOptPc:633.24,priceBldPc:664.91,priceRtlPc:728.23,colors:["Дуб золотой","Орех тёмный"]},
+    {id:"pro-sofit-2",name:"PRO СОФИТ (перфорированный/частичный/глухой)",texture:"soffit",panelLen:3.0,panelW:0.3,area:0.9,pack:10,priceOptM2:599.5,priceBldM2:629.48,priceRtlM2:689.43,priceOptPc:539.55,priceBldPc:566.53,priceRtlPc:620.48,colors:["Белый","Коричневый (RAL 8017)","Темно-коричневый (RAL 8019)","Графитовый","Чёрный"]}
+  ];
+
+var ACCESSORIES_CATALOG = [
+    {id:"soedinitelnaya-planka",name:"Соединительная планка (Н-профиль)",priceOptPc:679.49,priceBldPc:713.46,priceRtlPc:869.74,lenM:3.0},
+    {id:"j-planka",name:"J-планка",priceOptPc:302.42,priceBldPc:317.54,priceRtlPc:387.09,lenM:3.0},
+    {id:"naruzhnyy-ugol",name:"Наружный угол",priceOptPc:873.62,priceBldPc:917.31,priceRtlPc:1118.24,lenM:3.0},
+    {id:"zavershayuschaya-planka",name:"Завершающая планка",priceOptPc:255.47,priceBldPc:268.24,priceRtlPc:327.0,lenM:3.0}
+  ];
+
+var DECOR_CATALOG = [
+    {id:"nalichnik-120",name:"Наличник 120, Белый",lenM:3.0,pack:10,priceOptPc:475.3,priceBldPc:499.07,priceRtlPc:608.38},
+    {id:"nalichnik-120-2",name:"Наличник 120, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:546.64,priceBldPc:573.97,priceRtlPc:699.69},
+    {id:"osnovanie-ugla-0095",name:"Основание угла 0095, Белый",lenM:3.0,pack:10,priceOptPc:475.3,priceBldPc:499.07,priceRtlPc:608.38},
+    {id:"osnovanie-ugla-0095-2",name:"Основание угла 0095, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:546.64,priceBldPc:573.97,priceRtlPc:699.69},
+    {id:"dobor-0095",name:"Добор 0095, Белый",lenM:3.0,pack:10,priceOptPc:475.3,priceBldPc:499.07,priceRtlPc:608.38},
+    {id:"dobor-0095-2",name:"Добор 0095, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:546.64,priceBldPc:573.97,priceRtlPc:699.69},
+    {id:"ugol-dekorativnyy",name:"Угол декоративный",lenM:2.0,pack:4,priceOptPc:1345.83,priceBldPc:1413.12,priceRtlPc:1722.67},
+    {id:"galtel",name:"UP Décor Галтель, Белая",lenM:3.0,pack:10,priceOptPc:401.99,priceBldPc:422.09,priceRtlPc:514.54},
+    {id:"galtel-2",name:"UP Décor Галтель, Графитовая/Коричневая",lenM:3.0,pack:10,priceOptPc:462.29,priceBldPc:485.4,priceRtlPc:591.72},
+    {id:"delitel",name:"UP Décor Делитель, Белый",lenM:3.0,pack:10,priceOptPc:517.81,priceBldPc:543.7,priceRtlPc:662.79},
+    {id:"delitel-2",name:"UP Décor Делитель, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:595.57,priceBldPc:625.35,priceRtlPc:762.33},
+    {id:"dobor-110",name:"UP Décor Добор-110, Белый",lenM:3.0,pack:10,priceOptPc:475.3,priceBldPc:499.07,priceRtlPc:608.38},
+    {id:"dobor-110-2",name:"UP Décor Добор-110, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:546.64,priceBldPc:573.97,priceRtlPc:699.69},
+    {id:"dobor-170",name:"UP Décor Добор-170, Белый",lenM:3.0,pack:10,priceOptPc:560.97,priceBldPc:589.02,priceRtlPc:718.04},
+    {id:"dobor-170-2",name:"UP Décor Добор-170, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:644.99,priceBldPc:677.24,priceRtlPc:825.59},
+    {id:"ugol-50",name:"Наружный угол 50 мм, Белый",lenM:3.0,pack:10,priceOptPc:475.3,priceBldPc:499.07,priceRtlPc:608.38},
+    {id:"ugol-50-2",name:"Наружный угол 50 мм, Графитовый/Коричневый",lenM:3.0,pack:10,priceOptPc:546.64,priceBldPc:573.97,priceRtlPc:699.69},
+    {id:"shirokaya-okolookonnaya",name:"Широкая околооконная планка, Дуб золотой",lenM:3.0,priceOptPc:967.8,priceBldPc:1016.19,priceRtlPc:1238.79}
+  ];
+
 (function(){
   "use strict";
 
-  // ---------- product data ----------
-  // Panel geometry is representative per collection line (working area per panel, pack size).
-  // For an exact order, confirm current batch specs with the U-Plast partner catalog.
-  var COLLECTIONS = [
-    {
-      id:'brus', name:'Корабельный брус', kind:'сайдинг · под дерево',
-      panelLen:3.05, panelW:0.23, area:0.70, pack:10,
-      texture:'wood-brus',
-      colors:[
-        {n:'Белый', hex:'#f2efe6'},
-        {n:'Слоновая кость', hex:'#eee0bd'},
-        {n:'Кремовый', hex:'#e7d3a6'},
-        {n:'Светло-серый', hex:'#c9cbc2'},
-        {n:'Серый камень', hex:'#9a9c8f'},
-        {n:'Графит', hex:'#4a4c46'}
-      ]
-    },
-    {
-      id:'timberblock', name:'Timberblock', kind:'сайдинг · под дерево, брус',
-      panelLen:3.05, panelW:0.23, area:0.70, pack:10,
-      texture:'wood-timber',
-      colors:[
-        {n:'Ясень', hex:'#d8c9a8'},
-        {n:'Дуб', hex:'#b98a54'},
-        {n:'Ель', hex:'#8a6b42'},
-        {n:'Кедр', hex:'#a2532c'},
-        {n:'Пихта', hex:'#6e5738'}
-      ]
-    },
-    {
-      id:'planken', name:'Планкен', kind:'сайдинг · вертикальный, под дерево',
-      panelLen:2.00, panelW:0.24, area:0.48, pack:12,
-      texture:'wood-vert',
-      colors:[
-        {n:'Кеновый', hex:'#c9ad7f'},
-        {n:'Янтарный', hex:'#a9702f'},
-        {n:'Угольный', hex:'#3b332c'},
-        {n:'Седой', hex:'#8d8d84'}
-      ]
-    },
-    {
-      id:'stonehouse', name:'Stone House', kind:'фасадная панель · под камень',
-      panelLen:1.14, panelW:0.47, area:0.53, pack:4,
-      texture:'stone',
-      colors:[
-        {n:'Известняк светлый', hex:'#d8d2c3'},
-        {n:'Известняк тёмный', hex:'#a49a86'},
-        {n:'Сланец', hex:'#5b5a57'},
-        {n:'Песчаник', hex:'#c1997a'}
-      ]
-    },
-    {
-      id:'hokla', name:'Hokla', kind:'фасадная панель · под щепу',
-      panelLen:1.14, panelW:0.47, area:0.53, pack:4,
-      texture:'shake',
-      colors:[
-        {n:'Натуральный', hex:'#b98f57'},
-        {n:'Графит', hex:'#4e4a44'},
-        {n:'Кофе', hex:'#5e4128'}
-      ]
-    },
-    {
-      id:'classic', name:'Classic', kind:'сайдинг · гладкий классический',
-      panelLen:3.66, panelW:0.23, area:0.84, pack:10,
-      texture:'smooth',
-      colors:[
-        {n:'Белый', hex:'#f5f3ec'},
-        {n:'Пастель', hex:'#e9e3cf'},
-        {n:'Голубой', hex:'#b9c8cc'},
-        {n:'Зелёный', hex:'#7f9a72'},
-        {n:'Коричневый', hex:'#6d5540'}
-      ]
-    }
+  var TRIM_LEN = 3.0; // standard profile length assumed for accessory strips, m
+
+  var TIERS = [
+    {id:'opt', label:'ОПТ'},
+    {id:'bld', label:'СТРОИТЕЛЬ'},
+    {id:'rtl', label:'РОЗНИЦА'}
   ];
 
-  var TRIM_LEN = 3.0; // standard length of corner/starting/J/finish strips, m
-
   var state = {
-    walls: [ {w:6, h:3}, {w:9, h:3}, {w:6, h:3}, {w:9, h:3} ],
-    openings: [ {label:'Окна', qty:6, w:1.3, h:1.4}, {label:'Дверь', qty:1, w:1.0, h:2.1} ],
-    collection: COLLECTIONS[0].id,
-    color: COLLECTIONS[0].colors[0].n,
+    walls: [ {w:0, h:0} ],
+    openings: [ {label:'Окна', qty:0, w:0, h:0}, {label:'Дверь', qty:0, w:0, h:0} ],
+    tier: 'rtl',
+    sidingIdx: 0,
+    sidingColor: SIDING_CATALOG[0].colors[0],
+    useSoffit: false,
+    soffitIdx: 0,
+    soffitColor: SOFFIT_CATALOG[0].colors[0],
+    decorQty: {}, // id -> qty
     waste: 10
   };
 
+  function priceKey(base){ // base: 'M2' or 'Pc'
+    return 'price' + (state.tier==='opt'?'Opt':state.tier==='bld'?'Bld':'Rtl') + base;
+  }
+  function fmtMoney(n){
+    return Math.round(n).toLocaleString('ru-RU') + ' ₽';
+  }
+
+  // ---------- swatch texture rendering ----------
   function texCss(tex, hex){
     switch(tex){
       case 'wood-brus':
@@ -515,6 +581,8 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
         return 'radial-gradient(circle at 20% 30%,'+shade(hex,16)+' 0 14%, transparent 15%), radial-gradient(circle at 70% 60%,'+shade(hex,-12)+' 0 18%, transparent 19%), radial-gradient(circle at 45% 85%,'+shade(hex,10)+' 0 12%, transparent 13%), linear-gradient('+hex+','+hex+')';
       case 'shake':
         return 'repeating-linear-gradient(25deg,'+shade(hex,10)+' 0 4px,'+hex+' 4px 10px)';
+      case 'soffit':
+        return 'repeating-linear-gradient(90deg,'+shade(hex,-14)+' 0 2px, transparent 2px 16px), linear-gradient(180deg,'+shade(hex,8)+','+shade(hex,-4)+')';
       default:
         return 'linear-gradient(180deg,'+shade(hex,10)+','+shade(hex,-6)+')';
     }
@@ -527,7 +595,36 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     b = Math.round(b + (pct>0? (255-b)*f : b*f));
     return 'rgb('+r+','+g+','+b+')';
   }
-  function getCollection(id){ return COLLECTIONS.filter(function(c){return c.id===id;})[0]; }
+  // approximate a real hex swatch from a Russian color name (no per-color hex is in the price list)
+  function colorHex(name){
+    var n = name.toLowerCase();
+    var rules = [
+      [/бел|снеж|полярн|полуночн.*кость|слонов/, '#f1efe6'],
+      [/чёрн|черн/, '#232320'],
+      [/угольн|графит|антрацит|грифель/, '#3d3e3a'],
+      [/тёмн.*коричн|темно.*коричн/, '#4a3324'],
+      [/коричн|мокко|кофе|орех.*тёмн|орех темн/, '#6b4a30'],
+      [/орех.*светл|орех светл/, '#a9764a'],
+      [/золот|янтар|медов|кленов/, '#b9822f'],
+      [/дуб/, '#a9763f'],
+      [/дым|туман|цемент|холодн/, '#8f948d'],
+      [/сер(ый|ого|ая)|седой|пепел|песец/, '#9a9c93'],
+      [/бежев/, '#d9c6a3'],
+      [/песоч|песчан|песок/, '#cbb587'],
+      [/кремов|ваниль|льнян|пшеничн/, '#e6d6ab'],
+      [/красн|магма|латуль/, '#a4402a'],
+      [/зелён|мох/, '#5e7a52'],
+      [/голуб|синий|фьорд/, '#5c7a8a'],
+      [/кварц|кремний/, '#c7bfae'],
+      [/бурый/, '#7a5a3c'],
+      [/светл/, '#cdbfa0'],
+      [/натурал/, '#b08a54'],
+      [/родник|озер/, '#d7cba0'],
+      [/пустын/, '#c9a874']
+    ];
+    for(var i=0;i<rules.length;i++){ if(rules[i][0].test(n)) return rules[i][1]; }
+    return '#b3a98f';
+  }
 
   // ---------- render: walls ----------
   var wallsList = document.getElementById('wallsList');
@@ -593,43 +690,138 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     state.openings.push({label:'Окно', qty:1, w:1.2, h:1.4}); renderOpenings(); recalc();
   });
 
-  // ---------- collection tabs + swatches ----------
-  var tabsEl = document.getElementById('collectionTabs');
-  var swatchesEl = document.getElementById('swatches');
-  var collMetaEl = document.getElementById('collMeta');
-
-  function renderTabs(){
-    tabsEl.innerHTML = '';
-    COLLECTIONS.forEach(function(c){
+  // ---------- price tier tabs ----------
+  var tierTabsEl = document.getElementById('tierTabs');
+  function renderTierTabs(){
+    tierTabsEl.innerHTML = '';
+    TIERS.forEach(function(t){
       var b = document.createElement('button');
-      b.className = 'coll-btn'; b.type='button'; b.textContent = c.name;
-      b.setAttribute('aria-pressed', String(c.id===state.collection));
-      b.addEventListener('click', function(){
-        state.collection = c.id;
-        state.color = c.colors[0].n;
-        renderTabs(); renderSwatches(); recalc();
-      });
-      tabsEl.appendChild(b);
+      b.className = 'tier-btn'; b.type = 'button'; b.textContent = t.label;
+      b.setAttribute('aria-pressed', String(t.id===state.tier));
+      b.addEventListener('click', function(){ state.tier = t.id; renderTierTabs(); recalc(); });
+      tierTabsEl.appendChild(b);
     });
-    var c = getCollection(state.collection);
-    collMetaEl.innerHTML = '<b>'+c.kind+'</b> — панель '+c.panelLen.toFixed(2)+' × '+c.panelW.toFixed(2)+' м, рабочая площадь '+c.area.toFixed(2)+' м², '+c.pack+' шт/уп.';
   }
 
-  function renderSwatches(){
-    swatchesEl.innerHTML = '';
-    var c = getCollection(state.collection);
-    c.colors.forEach(function(col){
+  // ---------- siding line + swatches ----------
+  var sidingLineEl = document.getElementById('sidingLine');
+  var sidingMetaEl = document.getElementById('sidingMeta');
+  var sidingSwatchesEl = document.getElementById('sidingSwatches');
+
+  function renderSidingLine(){
+    sidingLineEl.innerHTML = '';
+    SIDING_CATALOG.forEach(function(item, i){
+      var opt = document.createElement('option');
+      opt.value = i; opt.textContent = item.name;
+      sidingLineEl.appendChild(opt);
+    });
+    sidingLineEl.value = state.sidingIdx;
+    var item = SIDING_CATALOG[state.sidingIdx];
+    sidingMetaEl.innerHTML = 'панель '+item.panelLen.toFixed(2)+' × '+item.panelW.toFixed(3)+' м, площадь <b>'+item.area.toFixed(3)+' м²</b>, '+item.pack+' шт/уп., <b>'+item[priceKey('M2')].toFixed(0)+' ₽/м²</b> ('+TIERS.filter(function(t){return t.id===state.tier;})[0].label+')';
+  }
+  sidingLineEl.addEventListener('change', function(){
+    state.sidingIdx = +sidingLineEl.value;
+    state.sidingColor = SIDING_CATALOG[state.sidingIdx].colors[0];
+    renderSidingLine(); renderSidingSwatches(); recalc();
+  });
+
+  function renderSidingSwatches(){
+    sidingSwatchesEl.innerHTML = '';
+    var item = SIDING_CATALOG[state.sidingIdx];
+    item.colors.forEach(function(col){
       var b = document.createElement('button');
-      b.className = 'swatch'; b.type='button';
-      b.setAttribute('aria-pressed', String(col.n===state.color));
+      b.className = 'swatch'; b.type = 'button';
+      b.setAttribute('aria-pressed', String(col===state.sidingColor));
       var chip = document.createElement('span');
-      chip.className='chip';
-      chip.style.background = texCss(c.texture, col.hex);
+      chip.className = 'chip';
+      chip.style.background = texCss(item.texture, colorHex(col));
       var name = document.createElement('span');
-      name.className='name'; name.textContent = col.n;
+      name.className = 'name'; name.textContent = col;
       b.appendChild(chip); b.appendChild(name);
-      b.addEventListener('click', function(){ state.color = col.n; renderSwatches(); recalc(); });
-      swatchesEl.appendChild(b);
+      b.addEventListener('click', function(){ state.sidingColor = col; renderSidingSwatches(); recalc(); });
+      sidingSwatchesEl.appendChild(b);
+    });
+  }
+
+  // ---------- soffit line + swatches ----------
+  var useSoffitEl = document.getElementById('useSoffit');
+  var soffitFieldsEl = document.getElementById('soffitFields');
+  var soffitLineEl = document.getElementById('soffitLine');
+  var soffitMetaEl = document.getElementById('soffitMeta');
+  var soffitSwatchesEl = document.getElementById('soffitSwatches');
+
+  function renderSoffitLine(){
+    soffitLineEl.innerHTML = '';
+    SOFFIT_CATALOG.forEach(function(item, i){
+      var opt = document.createElement('option');
+      opt.value = i; opt.textContent = item.name + ' (' + item.colors.join(', ') + ')';
+      soffitLineEl.appendChild(opt);
+    });
+    soffitLineEl.value = state.soffitIdx;
+    var item = SOFFIT_CATALOG[state.soffitIdx];
+    soffitMetaEl.innerHTML = 'панель '+item.panelLen.toFixed(2)+' × '+item.panelW.toFixed(2)+' м, площадь <b>'+item.area.toFixed(2)+' м²</b>, '+item.pack+' шт/уп., <b>'+item[priceKey('M2')].toFixed(0)+' ₽/м²</b>';
+  }
+  soffitLineEl.addEventListener('change', function(){
+    state.soffitIdx = +soffitLineEl.value;
+    state.soffitColor = SOFFIT_CATALOG[state.soffitIdx].colors[0];
+    renderSoffitLine(); renderSoffitSwatches(); recalc();
+  });
+
+  function renderSoffitSwatches(){
+    soffitSwatchesEl.innerHTML = '';
+    var item = SOFFIT_CATALOG[state.soffitIdx];
+    item.colors.forEach(function(col){
+      var b = document.createElement('button');
+      b.className = 'swatch'; b.type = 'button';
+      b.setAttribute('aria-pressed', String(col===state.soffitColor));
+      var chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.style.background = texCss(item.texture, colorHex(col));
+      var name = document.createElement('span');
+      name.className = 'name'; name.textContent = col;
+      b.appendChild(chip); b.appendChild(name);
+      b.addEventListener('click', function(){ state.soffitColor = col; renderSoffitSwatches(); recalc(); });
+      soffitSwatchesEl.appendChild(b);
+    });
+  }
+  function updateSoffitVisibility(){
+    soffitFieldsEl.style.display = state.useSoffit ? '' : 'none';
+  }
+  useSoffitEl.addEventListener('change', function(){
+    state.useSoffit = useSoffitEl.checked; updateSoffitVisibility(); recalc();
+  });
+
+  // ---------- decor list ----------
+  var decorListEl = document.getElementById('decorList');
+  function renderDecorList(){
+    decorListEl.innerHTML = '';
+    DECOR_CATALOG.forEach(function(item){
+      var qty = state.decorQty[item.id] || 0;
+      var row = document.createElement('div');
+      row.className = 'decor-row';
+      row.innerHTML =
+        '<div><div class="dname">'+item.name+'</div><div class="dmeta">'+item.lenM.toFixed(1)+' м/шт'+(item.pack?(', '+item.pack+' шт/уп.'):'')+'</div></div>' +
+        '<div class="dprice">'+item[priceKey('Pc')].toFixed(0)+' ₽/шт</div>' +
+        '<div class="qty-stepper">' +
+          '<button type="button" data-act="dec" data-id="'+item.id+'">−</button>' +
+          '<input type="number" min="0" data-id="'+item.id+'" value="'+qty+'">' +
+          '<button type="button" data-act="inc" data-id="'+item.id+'">+</button>' +
+        '</div>';
+      decorListEl.appendChild(row);
+    });
+    Array.prototype.forEach.call(decorListEl.querySelectorAll('button[data-act]'), function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.dataset.id;
+        var cur = state.decorQty[id] || 0;
+        state.decorQty[id] = Math.max(0, cur + (btn.dataset.act==='inc'?1:-1));
+        renderDecorList(); recalc();
+      });
+    });
+    Array.prototype.forEach.call(decorListEl.querySelectorAll('input[type=number]'), function(inp){
+      inp.addEventListener('input', function(){
+        state.decorQty[inp.dataset.id] = Math.max(0, parseInt(inp.value)||0);
+        recalc();
+      });
     });
   }
 
@@ -642,9 +834,10 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
 
   // ---------- calc ----------
   function sum(arr, fn){ return arr.reduce(function(a,x){return a+fn(x);},0); }
+  var accByIdC = {}; ACCESSORIES_CATALOG.forEach(function(a){ accByIdC[a.id]=a; });
 
   function recalc(){
-    var c = getCollection(state.collection);
+    var siding = SIDING_CATALOG[state.sidingIdx];
     var wasteF = 1 + state.waste/100;
 
     var grossWallArea = sum(state.walls, function(w){ return Math.max(0,w.w)*Math.max(0,w.h); });
@@ -652,9 +845,10 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     var netArea = Math.max(0, grossWallArea - openingsArea);
     var areaWithWaste = netArea * wasteF;
 
-    var panels = Math.ceil(areaWithWaste / c.area);
-    var packs = Math.ceil(panels / c.pack);
-    var boughtArea = panels * c.area;
+    var panels = Math.ceil(areaWithWaste / siding.area);
+    var packs = Math.ceil(panels / siding.pack);
+    var boughtArea = panels * siding.area;
+    var sidingCost = panels * siding[priceKey('Pc')];
 
     var perimeter = document.getElementById('perimeter').value;
     perimeter = perimeter ? parseFloat(perimeter) : sum(state.walls, function(w){return w.w;});
@@ -664,50 +858,83 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     var outerH = parseFloat(document.getElementById('outerHeight').value)||0;
     var innerCorners = parseFloat(document.getElementById('innerCorners').value)||0;
     var innerH = parseFloat(document.getElementById('innerHeight').value)||0;
-    var soffitArea = parseFloat(document.getElementById('soffitArea').value)||0;
+    var soffitArea = state.useSoffit ? (parseFloat(document.getElementById('soffitArea').value)||0) : 0;
 
-    var startStripQty = Math.ceil((perimeter*wasteF)/TRIM_LEN) || 0;
     var outerCornerQty = Math.ceil((outerCorners*outerH*wasteF)/TRIM_LEN) || 0;
     var innerCornerQty = Math.ceil((innerCorners*innerH*wasteF)/TRIM_LEN) || 0;
 
     var openingsPerimeter = sum(state.openings, function(o){ return o.qty*2*(o.w+o.h); });
-    var jTrimQty = Math.ceil((openingsPerimeter*wasteF)/TRIM_LEN) || 0;
+    var jTrimQty = Math.ceil(((perimeter+openingsPerimeter+(soffitArea>0?perimeter:0))*wasteF)/TRIM_LEN) || 0;
 
-    // H-profile: one vertical joint per wall wider than a panel run (simplified: every extra 3m of wall width beyond the first)
-    var hProfileRuns = sum(state.walls, function(w){ return Math.max(0, Math.ceil(w.w / (c.panelLen*1.6)) - 1); });
+    var finishQty = Math.ceil((perimeter*wasteF)/TRIM_LEN) || 0;
+
+    var hProfileRuns = sum(state.walls, function(w){ return Math.max(0, Math.ceil(w.w / (siding.panelLen*1.6)) - 1); });
     var hProfileQty = Math.ceil((hProfileRuns * sum(state.walls,function(w){return w.h;})/Math.max(1,state.walls.length) * wasteF)/TRIM_LEN) || 0;
 
-    var soffitPanels = soffitArea>0 ? Math.ceil((soffitArea*wasteF)/0.9) : 0; // soffit panel ~0.9 m2
-    var soffitJQty = soffitArea>0 ? Math.ceil((perimeter*wasteF)/TRIM_LEN) : 0;
+    var soffitItem = SOFFIT_CATALOG[state.soffitIdx];
+    var soffitPanels = soffitArea>0 ? Math.ceil((soffitArea*wasteF)/soffitItem.area) : 0;
+    var soffitCost = soffitPanels * soffitItem[priceKey('Pc')];
 
     document.getElementById('tilePanels').textContent = panels;
     document.getElementById('tilePacks').textContent = packs;
     document.getElementById('tileArea').textContent = boughtArea.toFixed(1)+' м²';
     document.getElementById('tileNetArea').textContent = netArea.toFixed(1)+' м²';
-    document.getElementById('collectionBadge').textContent = c.name;
+    document.getElementById('collectionBadge').textContent = siding.name.split(' ').slice(0,2).join(' ');
+
+    var accJ = accByIdC['j-planka'], accOuter = accByIdC['naruzhnyy-ugol'], accH = accByIdC['soedinitelnaya-planka'], accFin = accByIdC['zavershayuschaya-planka'];
 
     var rows = [
-      {name:c.name+' — '+state.color, desc:'основной сайдинг, '+c.pack+' шт/уп.', qty:panels+' шт · '+packs+' уп.'},
-      {name:'Стартовая планка', desc:'монтаж по периметру цоколя', qty:startStripQty+' шт'},
-      {name:'Наружный угол', desc:outerCorners+' угл. × '+outerH.toFixed(1)+' м', qty:outerCornerQty+' шт'}
+      {name:siding.name+' — '+state.sidingColor, desc:'основной сайдинг, '+siding.pack+' шт/уп.', qty:panels+' шт · '+packs+' уп.', sum:sidingCost}
     ];
-    if(innerCorners>0) rows.push({name:'Внутренний угол', desc:innerCorners+' угл. × '+innerH.toFixed(1)+' м', qty:innerCornerQty+' шт'});
-    rows.push({name:'J-профиль / финишная', desc:'обрамление окон и дверей', qty:jTrimQty+' шт'});
-    if(hProfileQty>0) rows.push({name:'Н-профиль', desc:'стыковка панелей на длинных стенах', qty:hProfileQty+' шт'});
-    if(soffitArea>0){
-      rows.push({name:'Софит', desc:'подшивка свесов кровли', qty:soffitPanels+' шт'});
-      rows.push({name:'J-профиль (софит)', desc:'по периметру подшивки', qty:soffitJQty+' шт'});
+    var jCost = jTrimQty * accJ[priceKey('Pc')];
+    rows.push({name:accJ.name, desc:'старт/окна-двери'+(soffitArea>0?'/софит':'')+', периметр+проёмы', qty:jTrimQty+' шт', sum:jCost});
+
+    var outerCost = outerCornerQty * accOuter[priceKey('Pc')];
+    rows.push({name:accOuter.name, desc:outerCorners+' угл. × '+outerH.toFixed(1)+' м', qty:outerCornerQty+' шт', sum:outerCost});
+
+    var innerCost = 0;
+    if(innerCorners>0){
+      innerCost = innerCornerQty * accJ[priceKey('Pc')];
+      rows.push({name:'J-планка (внутр. угол)', desc:innerCorners+' угл. × '+innerH.toFixed(1)+' м', qty:innerCornerQty+' шт', sum:innerCost});
     }
+
+    var finCost = finishQty * accFin[priceKey('Pc')];
+    rows.push({name:accFin.name, desc:'завершение по периметру', qty:finishQty+' шт', sum:finCost});
+
+    var hCost = 0;
+    if(hProfileQty>0){
+      hCost = hProfileQty * accH[priceKey('Pc')];
+      rows.push({name:accH.name, desc:'стыковка панелей на длинных стенах', qty:hProfileQty+' шт', sum:hCost});
+    }
+
+    if(soffitArea>0){
+      rows.push({name:soffitItem.name+' — '+state.soffitColor, desc:'подшивка свесов, '+soffitArea.toFixed(1)+' м²', qty:soffitPanels+' шт', sum:soffitCost});
+    }
+
+    var decorCost = 0;
+    DECOR_CATALOG.forEach(function(item){
+      var qty = state.decorQty[item.id] || 0;
+      if(qty>0){
+        var c = qty * item[priceKey('Pc')];
+        decorCost += c;
+        rows.push({name:item.name, desc:'декор/добор', qty:qty+' шт', sum:c});
+      }
+    });
+
+    var totalCost = sidingCost + jCost + outerCost + innerCost + finCost + hCost + soffitCost + decorCost;
+
+    document.getElementById('tileTotal').textContent = fmtMoney(totalCost);
+    document.getElementById('footTotal').textContent = fmtMoney(totalCost);
 
     var body = document.getElementById('partsBody');
     body.innerHTML = '';
     rows.forEach(function(r){
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td class="name">'+r.name+'</td><td class="desc">'+r.desc+'</td><td class="qty">'+r.qty+'</td>';
+      tr.innerHTML = '<td class="name">'+r.name+'</td><td class="desc">'+r.desc+'</td><td class="qty">'+r.qty+'</td><td class="sum">'+fmtMoney(r.sum)+'</td>';
       body.appendChild(tr);
     });
 
-    state._lastSummary = {c:c, color:state.color, panels:panels, packs:packs, boughtArea:boughtArea, netArea:netArea, rows:rows, waste:state.waste};
+    state._lastSummary = {siding:siding, color:state.sidingColor, panels:panels, packs:packs, boughtArea:boughtArea, netArea:netArea, rows:rows, waste:state.waste, total:totalCost, tier:TIERS.filter(function(t){return t.id===state.tier;})[0].label};
   }
 
   // ---------- copy / reset ----------
@@ -715,12 +942,14 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     var s = state._lastSummary;
     if(!s) return;
     var lines = [];
-    lines.push('Смета фасада — '+s.c.name+', '+s.color);
+    lines.push('Смета фасада — '+s.siding.name+', '+s.color+' (цены: '+s.tier+')');
     lines.push('Чистая площадь стен: '+s.netArea.toFixed(1)+' м² · запас на подрезку: '+s.waste+'%');
     lines.push('');
-    s.rows.forEach(function(r){ lines.push('- '+r.name+': '+r.qty+' ('+r.desc+')'); });
+    s.rows.forEach(function(r){ lines.push('- '+r.name+': '+r.qty+' — '+fmtMoney(r.sum)+' ('+r.desc+')'); });
     lines.push('');
-    lines.push('Ориентировочный расчёт, источник фактур: b2b.faceup.u-plast.by');
+    lines.push('ИТОГО: '+fmtMoney(s.total));
+    lines.push('');
+    lines.push('Ориентировочный расчёт по прайсу от 01.07.2026');
     var text = lines.join('\n');
     var msg = document.getElementById('copyMsg');
     function shown(){ msg.hidden=false; setTimeout(function(){msg.hidden=true;},2200); }
@@ -737,23 +966,29 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     }catch(e){}
   }
   document.getElementById('resetBtn').addEventListener('click', function(){
-    state.walls = [ {w:6, h:3}, {w:9, h:3}, {w:6, h:3}, {w:9, h:3} ];
-    state.openings = [ {label:'Окна', qty:6, w:1.3, h:1.4}, {label:'Дверь', qty:1, w:1.0, h:2.1} ];
-    document.getElementById('outerCorners').value=4;
-    document.getElementById('outerHeight').value=3;
+    state.walls = [ {w:0, h:0} ];
+    state.openings = [ {label:'Окна', qty:0, w:0, h:0}, {label:'Дверь', qty:0, w:0, h:0} ];
+    state.decorQty = {};
+    document.getElementById('outerCorners').value=0;
+    document.getElementById('outerHeight').value=0;
     document.getElementById('innerCorners').value=0;
-    document.getElementById('innerHeight').value=3;
+    document.getElementById('innerHeight').value=0;
     document.getElementById('perimeter').value='';
     document.getElementById('soffitArea').value=0;
     document.getElementById('waste').value=10; state.waste=10; wasteVal.textContent='10%';
-    renderWalls(); renderOpenings(); recalc();
+    renderWalls(); renderOpenings(); renderDecorList(); recalc();
   });
 
   // ---------- boot ----------
   renderWalls();
   renderOpenings();
-  renderTabs();
-  renderSwatches();
+  renderTierTabs();
+  renderSidingLine();
+  renderSidingSwatches();
+  renderSoffitLine();
+  renderSoffitSwatches();
+  updateSoffitVisibility();
+  renderDecorList();
   recalc();
 
   var extraInputs = ['outerCorners','outerHeight','innerCorners','innerHeight','perimeter','soffitArea'];
@@ -901,7 +1136,7 @@ footer{margin-top:30px; font-size:12px; color:var(--ink-soft); text-align:center
     }
   }
 
-  // ---- Path B: your own backend holding the Anthropic API key ----
+  // ---- Path B: your own backend holding the vision API key ----
   async function runViaOwnServer(endpoint){
     var refH = parseFloat(document.getElementById('refHeight').value) || 3;
 
